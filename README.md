@@ -18,3 +18,14 @@ This will install all required dependencies.After doing this run following,
 npm start
 ```
 This will start electron app.
+
+### Features
+- You can select your playlist by `Select Folder`.
+
+- You can choose subtitle from different folder.If you have subtitle with same name as video file and both are in same folder then subtitle   will be choosen automatically.
+
+- Shortcut keys
+  |key|action|
+  |---|---|
+  |Space| Play/Pause Video|
+  
