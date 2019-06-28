@@ -25,7 +25,14 @@ This will start electron app.
 - You can choose subtitle from different folder.If you have subtitle with same name as video file and both are in same folder then subtitle   will be choosen automatically.
 
 - Shortcut keys
+
   |  key  |  action  |
   |  ---  |  ---  |
   |  Space  |  Play/Pause Video  |
-  
+  |  S/s  |  ScreenShot  |
+  | left/Right Arrow keys | Move forward/backward 10 seconds  |
+  | Top/Bottom Arrow keys | Change Volume  |
+  | P/p | Previous video from Playlist |
+  | N/n | Next video from Playlist |
+  | B/b | move backward 20 seconds |
+  | F/f | move forward 20 seconds |
