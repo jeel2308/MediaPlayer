@@ -7,7 +7,8 @@ This is a  videoPlayer built from electronjs for Windows.
 Download zip file from [here](https://github.com/jeel2308/MediaPlayer/releases/download/v1.0.1/browserwindow-win32-x64.zip)
 
 ### Dev
-You  need to have installed `NodeJS`
+You  need to have installed `NodeJS`.
+
 After cloning the repo, go to root folder and run following,
 ```
 npm install
