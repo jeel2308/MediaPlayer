@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="css/style.css" />
+    <title id="title">Video</title>
+  </head>
+  <body>
+    <figure id="container" tabindex="0" draggable="true">
+      <video id="myvideo" controls poster="icons/try.png">
+        <!-- <source src="Subah hone na de.mkv" id="firstsource" preload="metadata" type="video/webm" /> -->
+        <source src="" id="firstsource" type="video/webm" />
+        <!--<source src="episode8.mp4" type="video/mp4" />-->
+        <track label="English" kind="subtitles" srclang="en" src="" id="cue" />
+
+        Video tag is not supported.
+      </video>
+    </figure>
+    <div id="displaySubtitles">Jeel</div>
+    <div id="progress"><div id="progressbar"></div></div>
+    <div id="currenttime"></div>
+    <div id="remainingtime"></div>
+    <ul id="video-controls" class="controls">
+      <li class="buttons">
+        <button id="playpause" class="ctrlBtns">
+          <img src="icons/play.png" />
+        </button>
+      </li>
+      <li class="buttons">
+        <button id="stop" class="ctrlBtns" type="button">
+          <img src="icons/stop.png" />
+        </button>
+      </li>
+      <li class="buttons">
+        <button id="volume+" class="ctrlBtns">
+          <img src="icons/volinc.png" />
+        </button>
+      </li>
+      <li class="buttons">
+        <button id="volume-" class="ctrlBtns">
+          <img src="icons/voldec.png" />
+        </button>
+      </li>
+      <li class="buttons">
+        <button id="mute" class="ctrlBtns"><img src="icons/mute.png" /></button>
+      </li>
+      <li class="buttons">
+        <button id="skipbackward" class="ctrlBtns">
+          <img src="icons/backward.png" />
+        </button>
+      </li>
+      <li class="buttons">
+        <button id="skipahead" class="ctrlBtns">
+          <img src="icons/forward.png" />
+        </button>
+      </li>
+      <li class="buttons right">
+        <button id="fullscreen" class="ctrlBtns">
+          <img src="icons/maximize.png" />
+        </button>
+      </li>
+      <li class="buttons">
+        <button id="subtitles" class="ctrlBtns">
+          <img src="icons/closed-caption.png" />
+        </button>
+      </li>
+      <li class="buttons">
+        <button id="loop" class="ctrlBtns"><img src="icons/loop.png" /></button>
+      </li>
+      <li class="buttons">
+        <button id="back" class="ctrlBtns"><img src="icons/back.png" /></button>
+      </li>
+      <li class="buttons">
+        <button id="next" class="ctrlBtns"><img src="icons/next.png" /></button>
+      </li>
+      <li class="buttons">
+        <button id="rotate" class="ctrlBtns">90</button>
+      </li>
+    </ul>
+    <div id="volume"></div>
+    <video id="thumbnail" data-display="false" preload="metadata">
+      <source
+        src="Subah hone na de.mkv"
+        id="firstThumbnail"
+        type="video/webm"
+      />
+      <source src="episode8.mp4" />
+    </video>
+    <canvas id="canvas"></canvas>
+    <div id="sscontainer">
+      <img id="screenshot" src="" />
+      <a href="" download="try.jpg" id="save">SAVE</a>
+      <span id="close" class="close"></span>
+    </div>
+    <div id="subtitleSync">
+      <form id="syncForm">
+        <input type="number" id="numb" value="0" step="0.1" />
+        <div>
+          <button type="submit" id="submit">OK</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- <div id="equilizer">
+      <div id="stereo">
+        <div class="row">
+          <label for="lowshelf">32</label
+          ><input
+            type="range"
+            min="-12"
+            max="12"
+            value="0"
+            step="1"
+            id="lowshelf"
+          /><span class="gain">0dB</span>
+        </div>
+
+        <div class="row">
+          <label for="firstPeaking">64</label
+          ><input
+            type="range"
+            min="-12"
+            max="12"
+            value="0"
+            step="1"
+            id="firstPeaking"
+            class="peaking"
+          /><span class="gain">0dB</span>
+        </div>
+
+        <div class="row">
+          <label for="secondPeaking">125</label
+          ><input
+            type="range"
+            min="-12"
+            max="12"
+            value="0"
+            step="1"
+            id="secondPeaking"
+            class="peaking"
+          /><span class="gain">0dB</span>
+        </div>
+
+        <div class="row">
+          <label for="threePeaking">250</label
+          ><input
+            type="range"
+            min="-12"
+            max="12"
+            value="0"
+            step="1"
+            id="threePeaking"
+            class="peaking"
+          /><span class="gain">0dB</span>
+        </div>
+        <div class="row">
+          <label for="fourPeaking">500</label
+          ><input
+            type="range"
+            min="-12"
+            max="12"
+            value="0"
+            step="1"
+            id="fourPeaking"
+            class="peaking"
+          /><span class="gain">0dB</span>
+        </div>
+        <div class="row">
+          <label for="fivePeaking">1k</label
+          ><input
+            type="range"
+            min="-12"
+            max="12"
+            value="0"
+            step="1"
+            id="fivePeaking"
+            class="peaking"
+          /><span class="gain">0dB</span>
+        </div>
+        <div class="row">
+          <label for="sixPeaking">2k</label
+          ><input
+            type="range"
+            min="-12"
+            max="12"
+            value="0"
+            step="1"
+            id="sixPeaking"
+            class="peaking"
+          /><span class="gain">0dB</span>
+        </div>
+        <div class="row">
+          <label for="sevenPeaking">4k</label
+          ><input
+            type="range"
+            min="-12"
+            max="12"
+            value="0"
+            step="1"
+            id="sevenPeaking"
+            class="peaking"
+          /><span class="gain">0dB</span>
+        </div>
+        <div class="row">
+          <label for="eightPeaking">8k</label
+          ><input
+            type="range"
+            min="-12"
+            max="12"
+            value="0"
+            step="1"
+            id="eightPeaking"
+            class="peaking"
+          /><span class="gain">0dB</span>
+        </div>
+
+        <div class="row">
+          <label for="highshelf">16k</label
+          ><input
+            type="range"
+            min="-12"
+            max="12"
+            value="0"
+            step="1"
+            id="highshelf"
+          /><span class="gain">0dB</span>
+        </div>
+      </div>
+      <div id="select">
+        <div id="selectValue">
+          Default
+        </div>
+        <div id="options">
+          <div class="optionsValue active">Default</div>
+          <div class="optionsValue">Club</div>
+          <div class="optionsValue">Live</div>
+          <div class="optionsValue">Party</div>
+          <div class="optionsValue">Pop</div>
+          <div class="optionsValue">Soft</div>
+          <div class="optionsValue">Ska</div>
+          <div class="optionsValue">Reggae</div>
+          <div class="optionsValue">Rock</div>
+          <div class="optionsValue">Dance</div>
+          <div class="optionsValue">Techno</div>
+          <div class="optionsValue">Headphones</div>
+          <div class="optionsValue">Soft Rock</div>
+          <div class="optionsValue">Classical</div>
+          <div class="optionsValue">Large Hall</div>
+          <div class="optionsValue">Full Base</div>
+          <div class="optionsValue">Full Treble</div>
+          <div class="optionsValue">Laptop Speakers</div>
+          <div class="optionsValue">Full Bass & Treble</div>
+        </div> -->
+    <!-- </div> -->
+    <!-- <div id="reset">RESET</div>
+      <div id="close">Close</div>
+    </div> -->
+    <script src="js/index.js"></script>
+  </body>
+</html>
