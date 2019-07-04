@@ -1,6 +1,6 @@
 const electron = require("electron");
 const app = electron.app;
-
+const fs = require("fs");
 const BrowserWindow = electron.BrowserWindow;
 const path = require("path");
 const ipc = electron.ipcMain;
@@ -182,7 +182,7 @@ app.on("ready", function() {
 ipc.on("current-progress", function(event, progress) {
   if (progress !== null) {
     progress = progress.toPrecision(2);
-    win.setProgressBar(Number(progress));
+    if (win) win.setProgressBar(Number(progress));
   }
 });
 
@@ -197,8 +197,14 @@ ipc.on("dimension", function(event, dimension) {
   }
 });
 
-ipc.on("save", function(event) {
-  dialog.showSaveDialog(win, function() {
+ipc.on("save", function(event, args) {
+  dialog.showSaveDialog(win, function(s) {
+    args = args.replace(/^data:image\/\w+;base64,/, "");
+    let buf = new Buffer(args, "base64");
+
+    fs.writeFile(s, buf, function(err) {
+      if (err) console.log(err);
+    });
     win.webContents.send("saved");
   });
 });

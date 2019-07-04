@@ -422,13 +422,14 @@ let index = setTimeout(function() {
   });
   save.addEventListener("click", function(event) {
     event.preventDefault();
-    ipc.send("save");
+    ipc.send("save", save.href);
   });
-  videoContainer.addEventListener("keydown", function(event) {
-    if (event.ctrlKey && event.key === "s") {
-      if (sscontainer.style.display === "block") ipc.send("save");
-    }
-  });
+  // videoContainer.addEventListener("keydown", function(event) {
+  //   if (event.ctrlKey && (event.key === "s" || event.key === "S")) {
+  //     // if (sscontainer.style.display === "block") ipc.send("save");
+
+  //   }
+  // });
 }, 1000);
 
 ipc.on("ratio-selected", function(event, ratio) {
