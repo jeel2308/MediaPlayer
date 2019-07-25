@@ -1,10 +1,15 @@
 const electron = require("electron");
 const ipc = electron.ipcRenderer;
+const path = require("path");
 const fs = require("fs");
-
+const remote = electron.remote;
 let i = 1;
+let state = 0;
+let gainArr = [];
 let ctrlStr = false;
 let prevState = 0;
+let allowed = false;
+let window2 = remote.getGlobal("window2");
 const handleFolder = {
   videoList: [],
   src: "",
@@ -31,7 +36,6 @@ const handleFolder = {
       handleFolder.src = handleFolder.videoList[index + 1];
       title.innerHTML = handleFolder.src;
       handleFolder.currentIndex = index + 1;
-      handleSubtitles("", handleFolder.directory + "\\" + handleFolder.src);
     } else {
       if (index - 2 === -1) {
         back.style.display = "none";
@@ -43,11 +47,18 @@ const handleFolder = {
       handleFolder.src = handleFolder.videoList[index - 1];
       title.innerHTML = handleFolder.src;
       handleFolder.currentIndex = index - 1;
-      handleSubtitles("", handleFolder.directory + "\\" + handleFolder.src);
     }
+    handleLoading(handleFolder.directory + "//" + handleFolder.src);
+    handleInitialGain();
   },
 
   folderSelect: function(foldername, filename) {
+    if (handleFolder.directory === foldername) {
+      if (filename) handleLoading(handleFolder.directory + "//" + filename);
+      return;
+    }
+    allowed = false;
+    if (window2) window2.webContents.send("changeAllowed");
     handleFolder.directory = foldername;
 
     handleFolder.currentIndex = 0;
@@ -58,7 +69,7 @@ const handleFolder = {
         return;
       }
       handleFolder.videoList = files.filter(file => {
-        let extension = file.substr(file.lastIndexOf("."), file.length - 1);
+        let extension = file.substring(file.lastIndexOf("."), file.length);
         switch (extension) {
           case ".mp4":
           case ".MP4":
@@ -71,18 +82,15 @@ const handleFolder = {
             return true;
           }
         }
-
-        //pending from here
       });
-      // console.log(handleFolder.videoList);
-      //handleEquilizer();
+
       if (filename === undefined) {
         handleFolder.src = handleFolder.videoList[0];
         title.innerHTML = handleFolder.src;
-        handleSubtitles("", handleFolder.directory + "\\" + handleFolder.src);
         next.style.display = "block";
         back.style.display = "none";
       } else {
+        handleFolder.src = filename;
         let index = handleFolder.videoList.indexOf(filename);
         handleFolder.currentIndex = index;
         if (index === 0) {
@@ -94,28 +102,9 @@ const handleFolder = {
           back.style.display = "block";
         }
       }
-
-      if (i === 1) {
-        next.addEventListener("click", function() {
-          handleFolder.handlePrevNext(1);
-        });
-        back.addEventListener("click", function() {
-          handleFolder.handlePrevNext(-1);
-        });
-        video.addEventListener("ended", function() {
-          handleFolder.handlePrevNext(1);
-          prevState = 0.0;
-          numb.value = 0.0;
-        });
-        video.addEventListener("timeupdate", handleProgress);
-        video.addEventListener("loadedmetadata", function() {
-          aspectratio.index = 0;
-          handleDimension(2);
-          videoContainer.style.transform = "";
-        });
-      }
-
-      i++;
+      subtitles.style.display = "none";
+      handleInitialGain();
+      handleLoading(handleFolder.directory + "//" + handleFolder.src);
     });
   }
 };
@@ -127,91 +116,30 @@ const aspectratio = {
 
 // here each time i select folder new event listener will be added.so multiple handlePrevNext calls will fire.
 //To avoid this i put this in if condition.
-function handleSubtitles(subtitlePath, args) {
-  currentTime.innerHTML = "";
-  remainingTime.innerHTML = "";
-  if (args !== "") {
-    subtitlePath = args.replace(
-      /((\.)[a-zA-Z0-9]{3}|(\.)[a-zA-Z0-9]{4})$/,
-      ".vtt"
-    );
-    fs.stat(subtitlePath, function(err) {
-      if (err) {
-        let newSubtitle = subtitlePath.replace(/(\.)[a-z0-9]{3}/i, ".srt");
-        fs.stat(newSubtitle, function(error) {
-          if (error) {
-            subtitles.style.display = "none";
-            englishSubtitle.setAttribute("src", "");
-
-            handleLoading(args);
-          } else {
-            srtToVtt(newSubtitle, args);
-          }
-        });
-      } else {
-        handleTracks(subtitlePath);
-        handleLoading(args);
-      }
-    });
-  } else {
-    let index = subtitlePath.search(/\.vtt/);
-    if (index >= 0) {
-      handleTracks(subtitlePath);
-    } else {
-      srtToVtt(subtitlePath, "");
-    }
+function handleSubtitles(fileName) {
+  let index = fileName.search(new RegExp(".vtt"));
+  if (index === -1) {
+    fileName = srtToVtt(fileName);
   }
+  handleTracks(fileName);
 }
 
-// function handleEquilizer() {
-//   equilizer.style.display = "";
-//   equilizer.style.zIndex = "";
-//   for (let i = 0; i < peakingFreq.length; i++) {
-//     peakingFreq[i].value = 0;
-//   }
-//   lowshelf.value = hightshelf.value = 0;
-//   for (let i = 0; i < optionValues.length; i++) {
-//     optionValues[i].classList.remove("active");
-//   }
-//   optionValues[0].classList.add("active");
-//   selectValue.innerText = "Default";
-//   options.style.display = "none";
-
-//   ipc.send("reset");
-// }
-
-function srtToVtt(newSubtitle, args) {
-  fs.writeFile("subtitle.vtt", "WEBVTT\n", function(err) {
-    if (err) {
-      return;
-    }
-  });
-  fs.readFile(newSubtitle, "utf8", function(err, text) {
-    if (err) {
-      return;
-    }
-    text = text.split("");
-    let start = 0;
-    while (text.indexOf(">", start + 1) >= 0) {
-      let index = text.indexOf(">", start + 1);
-      text[index - 7] = ".";
-      text[index + 10] = ".";
-      start = index;
-    }
-    text = text.join("");
-    fs.appendFile("subtitle.vtt", "\r\n" + text, function(err) {
-      if (err) {
-        return;
-      } else {
-        if (args != "") {
-          handleTracks("subtitle.vtt");
-          handleLoading(args);
-        } else {
-          handleTracks("subtitle.vtt");
-        }
-      }
-    });
-  });
+function srtToVtt(srtfile) {
+  let vttfile = path.join(__dirname, "App", "Appdata", "subtitle.vtt");
+  fs.writeFileSync(vttfile, "WEBVTT\n");
+  let text = fs.readFileSync(srtfile, { encoding: "utf8" });
+  text = text.split("");
+  let start = 0;
+  while (text.indexOf(">", start + 1) >= 0) {
+    let index = text.indexOf(">", start + 1);
+    text[index - 7] = ".";
+    text[index + 10] = ".";
+    start = index;
+  }
+  text = text.join("");
+  fs.appendFileSync(vttfile, text);
+  fs.appendFileSync(vttfile, "\r\n");
+  return vttfile;
 }
 
 function handleProgress() {
@@ -271,11 +199,6 @@ function handleDimension(args) {
     args: args //win needs height and width in int,not in float
   };
 
-  // let height = video.videoHeight;
-  // let width = video.videoWidth;
-  // let ratio = width/height;
-  //handleAspectRatio(ratio);
-  //console.log(ratio);
   ipc.send("dimension", dimension);
 }
 
@@ -285,34 +208,12 @@ function handleVideoSelect(args) {
   let file = args.substr(index + 1, args.length);
   handleFolder.folderSelect(folder, file);
   title.innerHTML = file;
-  handleSubtitles("", args);
+
   // // when you search file using fs.stat() use actual urls,i.e. don't replace " " with %20
   //in above way video will play even if " " will not be replaced by %20.but it is good practice to do.
 }
 
 function handleAspectRatio(ratio) {
-  //console.log(video.videoHeight, video.videoWidth);
-  /* let width = 100 * ratio;
-  let width1, height1;
-  if (ctrlStr) height1 = screen.height;
-  else height1 = video.videoHeight;
-  width1 = ratio * height1;
-  console.log(width1, screen.width, video.videoHeight);
-  if (width1 > screen.width) {
-    width = (screen.width / screen.height) * 100;
-    let height = width / ratio;
-    videoContainer.setAttribute(
-      "style",
-      "width : " + `${width}vh` + ";height : " + `${height}vh`
-    );
-  } else {
-    //videoContainer.style.width = `${width}vh` + " " + "!important";
-    videoContainer.setAttribute(
-      "style",
-      "width : " + `${width}vh` + ";height : " + `${100}vh`
-    );
-    // videoContainer.style.cssText = "height: 500px !important";
-  }*/
   let width1 = ratio * video.videoHeight;
   let width2 = ratio * (screen.height - 100);
   if (
@@ -350,26 +251,31 @@ function handleSSync(diff2) {
   });
 }
 
+function handleInitialGain() {
+  if (state) {
+    let timer = setTimeout(function() {
+      handleGain(gainArr);
+    }, 500);
+    state = 0;
+  }
+  if (!allowed) {
+    handleGain([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+    // localStorage.setItem("check", false);
+    let window2 = remote.getGlobal("window2");
+    if (window2) {
+      window2.webContents.send("reset");
+    }
+  }
+}
+
 // Event Listeners
 let index = setTimeout(function() {
-  // console.log(new Date());
   videoContainer.addEventListener("dragover", function(event) {
     event.preventDefault();
   });
   videoContainer.addEventListener("drop", function(event) {
     let fileList = event.dataTransfer.files;
-    // let items = event.dataTransfer.items;
-    //let item = items[0].webkitGetAsEntry();
-    // console.log(item.DirectoryEntry);
-    //handleFolder.folderSelect(item.DirectoryEntry.fullPath);
-    /* if(item.isDirectory) {
-      let dirReader = item.createReader();
-      dirReader.readEntries(function(entries){
-        for(let i=0;i<entries.length;i++){
-          console.log(item.name);
-        }
-      });
-    }*/
+
     let file = fileList[0];
     fs.stat(file.path, function(err, stats) {
       if (err) return;
@@ -402,34 +308,30 @@ let index = setTimeout(function() {
       numb.focus();
     }
   });
-  rotate.addEventListener("click", function() {
-    let ratio = video.videoWidth / video.videoHeight;
-    if (ratio < 1) {
-      let width = 80 * ratio;
 
-      videoContainer.style.transform = //"rotate(90deg)";
-        //videoContainer.style.left = "0px";
-        "translateX(-50%) rotate(90deg) translateX(-30%)";
-      videoContainer.style.width = `${width}vw`;
-      videoContainer.style.height = `80vw`;
-    }
-    // let width = screen.height - 100;
-    // let height = width * (video.videoHeight / video.videoWidth);
-    // videoContainer.style.height = `${height}px`;
-    // videoContainer.style.width = `${width}px`;
-    // videoContainer.style.transform = `rotate(${90}deg)`;
-    // videoContainer.style.transformOrigin = "10% 30%";
-  });
   save.addEventListener("click", function(event) {
     event.preventDefault();
     ipc.send("save", save.href);
   });
-  // videoContainer.addEventListener("keydown", function(event) {
-  //   if (event.ctrlKey && (event.key === "s" || event.key === "S")) {
-  //     // if (sscontainer.style.display === "block") ipc.send("save");
 
-  //   }
-  // });
+  next.addEventListener("click", function() {
+    console.log("click");
+    handleFolder.handlePrevNext(1);
+  });
+  back.addEventListener("click", function() {
+    handleFolder.handlePrevNext(-1);
+  });
+  video.addEventListener("ended", function() {
+    handleFolder.handlePrevNext(1);
+    prevState = 0.0;
+    numb.value = 0.0;
+  });
+  video.addEventListener("timeupdate", handleProgress);
+  video.addEventListener("loadedmetadata", function() {
+    aspectratio.index = 0;
+    handleDimension(2);
+    videoContainer.style.transform = "";
+  });
 }, 1000);
 
 ipc.on("ratio-selected", function(event, ratio) {
@@ -477,18 +379,43 @@ ipc.on("video-selected", function(event, args) {
 });
 
 ipc.on("subtitle-selected", function(event, args) {
-  handleSubtitles(args, "");
+  handleSubtitles(args);
+  subtitles.style.display = "block";
 });
 
 ipc.on("folder-selected", function(event, foldername) {
   handleFolder.folderSelect(foldername);
 });
-// ipc.on("show", function() {
-//   equilizer.style.display = "block";
-//   equilizer.style.zIndex = "3";
-// });
-// ipc.on("hide", function() {
-//   equilizer.style.display = "";
-//   equilizer.style.zIndex = "";
-// });
-// console.log(new Date());
+
+ipc.on("handleGain", function(event, data) {
+  if (!firstsource.getAttribute("src")) {
+    state = 1;
+    gainArr = data;
+  } else handleGain(data);
+});
+ipc.on("midband", function(event, data) {
+  Filters[data.index].gain.value = data.value;
+});
+ipc.on("lowshelf", function(event, data) {
+  biquadFilter.gain.value = data;
+});
+ipc.on("highshelf", function(event, data) {
+  highPass.gain.value = data;
+});
+ipc.on("initialize", function(event) {
+  localStorage.setItem(
+    "frequency",
+    JSON.stringify({
+      mode: "Default",
+      gain: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    })
+  );
+  localStorage.setItem("check", false);
+});
+ipc.on("reset", function(event) {
+  handleGain([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+});
+ipc.on("check", function(event, data) {
+  allowed = data;
+});
+console.log(new Date(), __dirname);

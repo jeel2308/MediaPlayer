@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Equalizer</title>
+    <link rel="stylesheet" href="css/equalizer.css" />
+  </head>
+  <body>
+    <div style="display:inline-block">
+      <div id="default">Default</div>
+      <div id="list">
+        <div id="select" value="Default">
+          <div class="optionsValue">Live</div>
+          <div class="optionsValue">Pop</div>
+          <div class="optionsValue">Soft</div>
+          <div class="optionsValue">Ska</div>
+          <div class="optionsValue">Reggae</div>
+          <div class="optionsValue">Rock</div>
+          <div class="optionsValue">Dance</div>
+          <div class="optionsValue active">Default</div>
+          <div class="optionsValue">Techno</div>
+          <div class="optionsValue">Headphones</div>
+          <div class="optionsValue">Soft Rock</div>
+          <div class="optionsValue">Classical</div>
+          <div class="optionsValue">Large Hall</div>
+          <div class="optionsValue">Full Base</div>
+          <div class="optionsValue">Full Treble</div>
+          <div class="optionsValue">Laptop Speakers</div>
+          <div class="optionsValue">Full Base and Treble</div>
+        </div>
+      </div>
+    </div>
+    <div id="reset">RESET</div>
+    <div id="stereo">
+      <div class="row">
+        <label for="lowshelf">32</label
+        ><input
+          type="range"
+          min="-12"
+          max="12"
+          value="0"
+          step="1"
+          id="lowshelf"
+        /><span class="gain">0dB</span>
+      </div>
+
+      <div class="row">
+        <label for="firstPeaking">64</label
+        ><input
+          type="range"
+          min="-12"
+          max="12"
+          value="0"
+          step="1"
+          id="firstPeaking"
+          class="Frequencies"
+        /><span class="gain">0dB</span>
+      </div>
+
+      <div class="row">
+        <label for="secondPeaking">125</label
+        ><input
+          type="range"
+          min="-12"
+          max="12"
+          value="0"
+          step="1"
+          id="secondPeaking"
+          class="Frequencies"
+        /><span class="gain">0dB</span>
+      </div>
+
+      <div class="row">
+        <label for="threePeaking">250</label
+        ><input
+          type="range"
+          min="-12"
+          max="12"
+          value="0"
+          step="1"
+          id="threePeaking"
+          class="Frequencies"
+        /><span class="gain">0dB</span>
+      </div>
+      <div class="row">
+        <label for="fourPeaking">500</label
+        ><input
+          type="range"
+          min="-12"
+          max="12"
+          value="0"
+          step="1"
+          id="fourPeaking"
+          class="Frequencies"
+        /><span class="gain">0dB</span>
+      </div>
+      <div class="row">
+        <label for="fivePeaking">1k</label
+        ><input
+          type="range"
+          min="-12"
+          max="12"
+          value="0"
+          step="1"
+          id="fivePeaking"
+          class="Frequencies"
+        /><span class="gain">0dB</span>
+      </div>
+      <div class="row">
+        <label for="sixPeaking">2k</label
+        ><input
+          type="range"
+          min="-12"
+          max="12"
+          value="0"
+          step="1"
+          id="sixPeaking"
+          class="Frequencies"
+        /><span class="gain">0dB</span>
+      </div>
+      <div class="row">
+        <label for="sevenPeaking">4k</label
+        ><input
+          type="range"
+          min="-12"
+          max="12"
+          value="0"
+          step="1"
+          id="sevenPeaking"
+          class="Frequencies"
+        /><span class="gain">0dB</span>
+      </div>
+      <div class="row">
+        <label for="eightPeaking">8k</label
+        ><input
+          type="range"
+          min="-12"
+          max="12"
+          value="0"
+          step="1"
+          id="eightPeaking"
+          class="Frequencies"
+        /><span class="gain">0dB</span>
+      </div>
+
+      <div class="row">
+        <label for="highshelf">16k</label
+        ><input
+          type="range"
+          min="-12"
+          max="12"
+          value="0"
+          step="1"
+          id="highshelf"
+        /><span class="gain">0dB</span>
+      </div>
+    </div>
+    <div id="check">
+      <label for="checkbox">
+        <input type="checkbox" id="checkbox" />for all files of directory.
+      </label>
+    </div>
+    <script src="js/equalizer.js"></script>
+  </body>
+</html>

@@ -8,7 +8,8 @@ const url = require("url");
 const Menu = electron.Menu;
 const dialog = electron.dialog;
 
-let win;
+global.win = null;
+global.window2 = null;
 
 let template = [
   {
@@ -129,13 +130,14 @@ let template = [
     click: function() {
       win.webContents.send("showForm");
     }
+  },
+  {
+    label: "equalizer",
+    click: function() {
+      if (!window2) createEwindow();
+      else window2.focus();
+    }
   }
-  // {
-  //   label: "equilizer",
-  //   click: function() {
-  //     win.webContents.send("show");
-  //   }
-  // }
 ];
 
 let menu = Menu.buildFromTemplate(template);
@@ -147,7 +149,6 @@ function createWindow() {
       contextIsolation: false
     }
   });
-
   win.loadURL(
     url.format({
       pathname: path.join(__dirname, "App", "index.html"),
@@ -157,6 +158,7 @@ function createWindow() {
   );
   win.on("close", () => {
     win = null;
+    app.quit();
   });
 
   win.on("maximize", function(event) {
@@ -170,12 +172,33 @@ function createWindow() {
     // Menu.setApplicationMenu(menu);
     // win.setMenuBarVisibility(true);
   });
+  win.webContents.on("did-finish-load", function(event) {
+    win.webContents.send("initialize");
+  });
+}
+function createEwindow() {
+  window2 = new BrowserWindow({
+    resizable: false,
+    height: 500,
+    width: 500
+  });
+  window2.loadURL(
+    url.format({
+      pathname: path.join(__dirname, "App", "equalizer.html"),
+      protocol: "file",
+      slashes: true
+    })
+  );
+  window2.setMenuBarVisibility(false);
+  //window2.webContents.toggleDevTools();
+  window2.on("close", () => {
+    window2 = null;
+  });
 }
 app.commandLine.appendSwitch("autoplay-policy", "no-user-gesture-required"); //for play video as soon as it loaded.
 
-app.on("ready", function() {
+app.on("ready", function(event) {
   createWindow();
-
   Menu.setApplicationMenu(menu);
 });
 

@@ -1,10 +1,10 @@
-var video = document.getElementById("myvideo");
+const video = document.getElementById("myvideo");
 const playpause = document.getElementById("playpause");
 const stop = document.getElementById("stop");
 const progressbar = document.getElementById("progressbar");
 const progress = document.getElementById("progress");
 const volinc = document.getElementById("volume+");
-var videoContainer = document.getElementById("container");
+const videoContainer = document.getElementById("container");
 const voldec = document.getElementById("volume-");
 const mute = document.getElementById("mute");
 const fullscreen = document.getElementById("fullscreen");
@@ -18,13 +18,13 @@ const thumbnail = document.getElementById("thumbnail");
 const subtitles = document.getElementById("subtitles");
 let subtitleDisplay = document.getElementById("displaySubtitles");
 let firstsource = document.getElementById("firstsource");
+console.log(firstsource);
 let firstThumbnail = document.getElementById("firstThumbnail");
 let englishSubtitle = document.getElementById("cue");
 const loop = document.getElementById("loop");
 var next = document.getElementById("next");
 var back = document.getElementById("back");
 const title = document.getElementById("title");
-var rotate = document.getElementById("rotate");
 const canvas = document.getElementById("canvas");
 const screenshot = document.getElementById("screenshot");
 const sscontainer = document.getElementById("sscontainer");
@@ -33,24 +33,24 @@ var save = document.getElementById("save");
 const subtitleSync = document.getElementById("subtitleSync");
 const syncForm = document.getElementById("syncForm");
 const numb = document.getElementById("numb");
-const equilizer = document.getElementById("equilizer");
-let audio = document.getElementById("audio");
-//const video = document.getElementById("video");
-const lowshelf = document.getElementById("lowshelf");
-const hightshelf = document.getElementById("highshelf");
-//const playpause = document.getElementById("playpause");
-const peakingFreq = document.getElementsByClassName("peaking");
-const showGain = document.getElementsByClassName("gain");
-const select = document.getElementById("select");
+// const equalizer = document.getElementById("equalizer");
+// let audio = document.getElementById("audio");
+// //const video = document.getElementById("video");
+// const lowshelf = document.getElementById("lowshelf");
+// const hightshelf = document.getElementById("highshelf");
+// //const playpause = document.getElementById("playpause");
+// const peakingFreq = document.getElementsByClassName("peaking");
+// const showGain = document.getElementsByClassName("gain");
+// const select = document.getElementById("select");
 
 const AudioContext = window.AudioContext || window.webkitAudioContext;
-//const audiocontext = new AudioContext();
-//const track = audiocontext.createMediaElementSource(audio);
-// let track = audiocontext.createMediaElementSource(video);
-// let biquadFilter = audiocontext.createBiquadFilter();
-// const peakingFilter = [];
-// const len = peakingFreq.length;
-// let highPass = audiocontext.createBiquadFilter();
+const audiocontext = new AudioContext();
+// //const track = audiocontext.createMediaElementSource(audio);
+let videoTrack = audiocontext.createMediaElementSource(video);
+let biquadFilter = audiocontext.createBiquadFilter();
+const Filters = [];
+const len = 8;
+let highPass = audiocontext.createBiquadFilter();
 // const options = document.getElementById("options");
 // const optionValues = document.getElementsByClassName("optionsValue");
 // const selectValue = document.getElementById("selectValue");
@@ -270,35 +270,35 @@ function takeScreenShot() {
   }
 }
 
-let subtitleMenuButtons = [];
-let createMenuItem = function(id, lang, label) {
-  let listItem = document.createElement("li");
-  let button = listItem.appendChild(document.createElement("button"));
-  button.setAttribute("id", id);
-  button.className = "subtitles-button";
-  if (lang.length > 0) button.setAttribute("lang", lang);
-  button.value = label;
-  button.setAttribute("data-state", "inactive");
-  button.appendChild(document.createTextNode(label));
-  button.addEventListener("click", function(e) {
-    subtitleMenuButtons.map(function(v, i, a) {
-      subtitleMenuButtons[i].setAttribute("data-state", "inactive");
-    });
-    subtitleDisplay.innerHTML = "";
-    let lang = this.getAttribute("lang");
-    for (let i = 0; i < video.textTracks.length; i++) {
-      if (video.textTracks[i].language === lang) {
-        video.textTracks[i].mode = "hidden";
-        this.setAttribute("data-state", "active");
-      } else {
-        video.textTracks[i].mode = "disabled";
-      }
-    }
-    subtitlesMenu.style.display = "none";
-  });
-  subtitleMenuButtons.push(button);
-  return listItem;
-};
+// let subtitleMenuButtons = [];
+// let createMenuItem = function(id, lang, label) {
+//   let listItem = document.createElement("li");
+//   let button = listItem.appendChild(document.createElement("button"));
+//   button.setAttribute("id", id);
+//   button.className = "subtitles-button";
+//   if (lang.length > 0) button.setAttribute("lang", lang);
+//   button.value = label;
+//   button.setAttribute("data-state", "inactive");
+//   button.appendChild(document.createTextNode(label));
+//   button.addEventListener("click", function(e) {
+//     subtitleMenuButtons.map(function(v, i, a) {
+//       subtitleMenuButtons[i].setAttribute("data-state", "inactive");
+//     });
+//     subtitleDisplay.innerHTML = "";
+//     let lang = this.getAttribute("lang");
+//     for (let i = 0; i < video.textTracks.length; i++) {
+//       if (video.textTracks[i].language === lang) {
+//         video.textTracks[i].mode = "hidden";
+//         this.setAttribute("data-state", "active");
+//       } else {
+//         video.textTracks[i].mode = "disabled";
+//       }
+//     }
+//     subtitlesMenu.style.display = "none";
+//   });
+//   subtitleMenuButtons.push(button);
+//   return listItem;
+// };
 
 function disableSubtitle() {
   for (var i = 0; i < video.textTracks.length; i++) {
@@ -329,6 +329,7 @@ let handleLoading = function(args) {
 };
 
 function handleTracks(subtitlePath) {
+  console.log(subtitlePath);
   englishSubtitle.parentNode.removeChild(englishSubtitle);
   subtitlePath = subtitlePath.replace(/\s/g, "%20");
   let track = document.createElement("track");
@@ -339,12 +340,13 @@ function handleTracks(subtitlePath) {
   track.setAttribute("srclang", "en");
   englishSubtitle = track;
   video.appendChild(track);
+  video.textTracks[0].mode = "hidden";
   video.textTracks[0].addEventListener("cuechange", function() {
     changeSubtitleDisplay(video.textTracks[0]);
   });
-  subtitles.style.display = "block";
+  //subtitles.style.display = "block";
 }
-
+console.log(video.textTracks[0]);
 function handleLoop() {
   let src = loop.firstChild.src;
 
@@ -357,65 +359,6 @@ function handleLoop() {
   }
   videoContainer.focus();
 }
-
-// function handleMode(value) {
-//   switch (value) {
-//     case "Club":
-//       handleGain([0, 0, 4, 3, 3, 3, 2, 0, 0, 0]);
-//       break;
-//     case "Live":
-//       handleGain([-3, 0, 2, 3, 3, 3, 2, 1, 1, 1]);
-//       break;
-//     case "Pop":
-//       handleGain([1, 3, 4, 4, 3, 0, -1, -1, 1, 1]);
-//       break;
-//     case "Soft":
-//       handleGain([3, 1, 0, -1, 0, 2, 4, 5, 6, 7]);
-//       break;
-//     case "Ska":
-//       handleGain([-1, -3, -2, 0, 2, 3, 5, 5, 6, 5]);
-//       break;
-//     case "Reggae":
-//       handleGain([0, 0, 0, -3, 0, 3, 3, 0, 0, 0]);
-//       break;
-//     case "Default":
-//       handleGain([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
-//       break;
-//     case "Rock":
-//       handleGain([4, 3, -3, -5, -2, 2, 5, 6, 6, 6]);
-//       break;
-//     case "Dance":
-//       handleGain([5, 4, 1, 0, 0, -3, -4, -4, 0, 0]);
-//       break;
-//     case "Techno":
-//       handleGain([4, 3, 0, -3, -3, 0, 4, 5, 5, 5]);
-//       break;
-//     case "Headphones":
-//       handleGain([3, 6, 3, -2, -1, 1, 3, 5, 7, 7]);
-//       break;
-//     case "Soft Rock":
-//       handleGain([2, 2, 1, 0, -2, -2, -2, 0, 1, 5]);
-//       break;
-//     case "Classical":
-//       handleGain([0, 0, 0, 0, 0, 0, -4, -4, -4, -5]);
-//       break;
-//     case "Large Hall":
-//       handleGain([6, 6, 3, 3, 0, -3, -3, -3, 0, 0]);
-//       break;
-//     case "Full Base":
-//       handleGain([4, 5, 5, 3, 1, -2, -5, -6, -6, -6]);
-//       break;
-//     case "Full Treble":
-//       handleGain([-5, -5, -5, -2, 1, 6, 9, 9, 9, 9]);
-//       break;
-//     case "Laptop Speakers":
-//       handleGain([3, 6, 3, -2, -2, 1, 2, 5, 7, 8]);
-//       break;
-//     case "Full Bass & Treble":
-//       handleGain([4, 3, 0, -4, -3, 1, 4, 6, 7, 6]);
-//       break;
-//   }
-// }
 
 const togglescreen = {
   timer: 0,
@@ -456,26 +399,24 @@ if (!supportFs) {
   fullscreen.style.display = "none";
 }
 
-let subtitlesMenu;
-if (video.textTracks) {
-  let df = document.createDocumentFragment();
-  subtitlesMenu = df.appendChild(document.createElement("ul"));
-  subtitlesMenu.className = "subtitles-menu";
-  subtitlesMenu.appendChild(createMenuItem("subtitles-off", "", "Off"));
-  for (let i = 0; i < video.textTracks.length; i++) {
-    subtitlesMenu.appendChild(
-      createMenuItem(
-        "subtitles-" + video.textTracks[i].language,
-        video.textTracks[i].language,
-        video.textTracks[i].label
-      )
-    );
-    video.textTracks[i].addEventListener("cuechange", function() {
-      changeSubtitleDisplay(video.textTracks[i]);
-    });
-  }
-  videoContainer.appendChild(df);
-}
+// let subtitlesMenu;
+// if (video.textTracks) {
+//   let df = document.createDocumentFragment();
+//   subtitlesMenu = df.appendChild(document.createElement("ul"));
+//   subtitlesMenu.className = "subtitles-menu";
+//   subtitlesMenu.appendChild(createMenuItem("subtitles-off", "", "Off"));
+//   for (let i = 0; i < video.textTracks.length; i++) {
+//     subtitlesMenu.appendChild(
+//       createMenuItem(
+//         "subtitles-" + video.textTracks[i].language,
+//         video.textTracks[i].language,
+//         video.textTracks[i].label
+//       )
+//     );
+
+//   }
+//   videoContainer.appendChild(df);
+// }
 
 //event listeners
 document.addEventListener("fullscreenchange", function(e) {
@@ -605,12 +546,16 @@ progress.addEventListener("mouseout", function() {
 loop.addEventListener("click", handleLoop);
 
 subtitles.addEventListener("click", function() {
-  if (subtitlesMenu) {
-    subtitlesMenu.style.display =
-      subtitlesMenu.style.display == "block" ? "none" : "block";
+  if (video.textTracks[0].mode === "disabled") {
+    video.textTracks[0].mode = "hidden";
+  } else {
+    video.textTracks[0].mode = "disabled";
+    subtitleDisplay.innerHTML = "";
   }
 });
+
 close.addEventListener("click", function() {
+  console.log("event happened");
   sscontainer.style.display = "none";
   sscontainer.style.zIndex = "-2";
   screenshot.src = "";
@@ -619,118 +564,37 @@ close.addEventListener("click", function() {
 });
 // console.log(new Date());
 
-// biquadFilter.type = "lowshelf";
-// biquadFilter.frequency.value = 32.0;
-// biquadFilter.gain.value = 0.0;
+biquadFilter.type = "lowshelf";
+biquadFilter.frequency.value = 32.0;
+biquadFilter.gain.value = 0.0;
 
-// track.connect(biquadFilter);
-// for (i = 0; i < len; i++) {
-//   peakingFilter[i] = audiocontext.createBiquadFilter();
-//   peakingFilter[i].type = "peaking";
-//   peakingFilter[i].gain.value = 0.0;
-//   peakingFilter[i].Q.value = 1;
-//   if (i === 0) biquadFilter.connect(peakingFilter[i]);
-//   else peakingFilter[i - 1].connect(peakingFilter[i]);
-// }
-// peakingFilter[0].frequency.value = 64.0;
-// peakingFilter[1].frequency.value = 125.0;
-// peakingFilter[2].frequency.value = 250.0;
-// peakingFilter[3].frequency.value = 500.0;
-// peakingFilter[4].frequency.value = 1000.0;
-// peakingFilter[5].frequency.value = 2000.0;
-// peakingFilter[6].frequency.value = 4000.0;
-// peakingFilter[7].frequency.value = 8000.0;
-// highPass.frequency.value = 16000;
-// highPass.gain.value = 0.0;
-// peakingFilter[len - 1].connect(highPass).connect(audiocontext.destination);
+videoTrack.connect(biquadFilter);
+for (let i = 0; i < len; i++) {
+  Filters[i] = audiocontext.createBiquadFilter();
+  Filters[i].type = "peaking";
+  Filters[i].gain.value = 0.0;
+  Filters[i].Q.value = 1;
+  if (i === 0) biquadFilter.connect(Filters[i]);
+  else Filters[i - 1].connect(Filters[i]);
+}
+Filters[0].frequency.value = 64.0;
+Filters[1].frequency.value = 125.0;
+Filters[2].frequency.value = 250.0;
+Filters[3].frequency.value = 500.0;
+Filters[4].frequency.value = 1000.0;
+Filters[5].frequency.value = 2000.0;
+Filters[6].frequency.value = 4000.0;
+Filters[7].frequency.value = 8000.0;
+highPass.frequency.value = 16000;
+highPass.gain.value = 0.0;
+Filters[len - 1].connect(highPass).connect(audiocontext.destination);
 
-// function handleGain(gains) {
-//   biquadFilter.gain.value = gains[0];
-//   lowshelf.value = gains[0];
-//   showGain[0].innerHTML = gains[0] + "dB";
-//   for (let i = 0; i < 8; i++) {
-//     peakingFilter[i].gain.value = gains[i + 1];
-//     peakingFreq[i].value = gains[i + 1];
-//     showGain[i + 1].innerHTML = gains[i + 1] + "dB";
-//   }
-//   showGain[9].innerHTML = gains[9] + "dB";
-//   highPass.gain.value = gains[9];
-//   hightshelf.value = gains[9];
-// }
+function handleGain(gains) {
+  biquadFilter.gain.value = gains[0];
 
-// lowshelf.addEventListener("input", function() {
-//   let gain = this.value;
-//   biquadFilter.gain.value = gain;
-//   showGain[0].innerHTML = gain + "dB";
-// });
+  for (let i = 0; i < 8; i++) {
+    Filters[i].gain.value = gains[i + 1];
+  }
 
-// highshelf.addEventListener("input", function() {
-//   let gain = this.value;
-//   highPass.gain.value = gain;
-//   showGain[9].innerHTML = gain + "dB";
-// });
-
-/*peakingFilter[1].frequency.setValueAtTime(125,audiocontext.currentTime);
-peakingFilter[2].frequency.setValueAtTime(250,audiocontext.currentTime);
-peakingFilter[3].frequency.setValueAtTime(500,audiocontext.currentTime);
-peakingFilter[4].frequency.setValueAtTime(1000,audiocontext.currentTime);
-peakingFilter[5].frequency.setValueAtTime(2000,audiocontext.currentTime);
-peakingFilter[6].frequency.setValueAtTime(4000,audiocontext.currentTime);
-peakingFilter[7].frequency.setValueAtTime(8000,audiocontext.currentTime);*/
-//track.connect(biquadFilter).connect(audiocontext.destination);
-
-// highPass.frequency.setValueAtTime(16000,audiocontext.currentTime);
-
-// for (let i = 0; i < len; i++) {
-//   peakingFreq[i].addEventListener("input", function() {
-//     let gain = this.value;
-//     peakingFilter[i].gain.value = gain;
-//     showGain[i + 1].innerHTML = gain + "dB";
-//   });
-// }
-
-// selectValue.addEventListener("click", function(event) {
-//   options.style.display = "block";
-// });
-
-// options.addEventListener("mouseover", function(event) {
-//   console.log("here");
-//   handleMode(event.target.innerText);
-// });
-
-// options.addEventListener("click", function(event) {
-//   let data = event.target.innerText;
-//   selectValue.innerText = data;
-//   for (let i = 0; i < optionValues.length; i++) {
-//     optionValues[i].classList.remove("active");
-//   }
-//   event.target.classList.add("active");
-//   options.style.display = "none";
-//   equilizer.style.display = "";
-//   equilizer.style.zIndex = "";
-// });
-syncForm.addEventListener("submit", event => {
-  event.preventDefault();
-  subtitleSync.style.display = "";
-  subtitleSync.style.zIndex = "";
-});
-
-// document.body.addEventListener("mousemove", function(event) {
-//   if (
-//     !(
-//       event.pageY >= 96 &&
-//       event.pageY <= 290 &&
-//       event.pageX <= 893 &&
-//       event.pageX >= 395
-//     )
-//   ) {
-//     if (event.pageX <= 400 || event.pageX >= 553) {
-//       handleMode(selectValue.innerText);
-//       options.style.display = "none";
-//     }
-//     if (event.pageY >= 631 || event.pageY <= 295) {
-//       handleMode(selectValue.innerText);
-//       options.style.display = "none";
-//     }
-//   }
-// });
+  highPass.gain.value = gains[9];
+}

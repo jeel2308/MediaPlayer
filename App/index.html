@@ -72,18 +72,10 @@
       <li class="buttons">
         <button id="next" class="ctrlBtns"><img src="icons/next.png" /></button>
       </li>
-      <li class="buttons">
-        <button id="rotate" class="ctrlBtns">90</button>
-      </li>
     </ul>
     <div id="volume"></div>
     <video id="thumbnail" data-display="false" preload="metadata">
-      <source
-        src="Subah hone na de.mkv"
-        id="firstThumbnail"
-        type="video/webm"
-      />
-      <source src="episode8.mp4" />
+      <source src="" id="firstThumbnail" type="video/webm" />
     </video>
     <canvas id="canvas"></canvas>
     <div id="sscontainer">
@@ -100,7 +92,8 @@
       </form>
     </div>
 
-    <!-- <div id="equilizer">
+    <!-----------------------------EQUALIZER--------------------------------->
+    <div id="equalizer">
       <div id="stereo">
         <div class="row">
           <label for="lowshelf">32</label
@@ -225,13 +218,32 @@
           /><span class="gain">0dB</span>
         </div>
       </div>
-      <div id="select">
-        <div id="selectValue">
+      <select id="select">
+        <options value="Live" class="optionsValue">Live</options>
+        <options value="Party" class="optionsValue">Party</options>
+        <options value="Pop" class="optionsValue">Pop</options>
+        <options value="Soft" class="optionsValue">Soft</options>
+        <options value="Ska" class="optionsValue">Ska</options>
+        <options value="Reggae" class="optionsValue"></options>
+        <options value="Rock" class="optionsValue"></options>
+        <options value="Dance" class="optionsValue"></options>
+        <options value="Techno" class="optionsValue"></options>
+        <options value="Headphones" class="optionsValue"></options>
+        <options value="Soft Rock" class="optionsValue"></options>
+        <options value="Classical" class="optionsValue"></options>
+        <options value="Large Hall" class="optionsValue"></options>
+        <options value="Full Base" class="optionsValue"></options>
+        <options value="Full Treble" class="optionsValue"></options>
+        <options value="Laptop Speakers" class="optionsValue"></options>
+        <options value="Full Base & Treble" class="optionsValue"></options>
+      </select>
+      <!-- <div id="select"> -->
+      <!-- <div id="selectValue">
           Default
-        </div>
-        <div id="options">
-          <div class="optionsValue active">Default</div>
-          <div class="optionsValue">Club</div>
+        </div> -->
+      <!-- <select id="options"> -->
+      <!-- <option class="optionsValue active">Default</div>
+          <option value="Club" class="optionsValue">Club</div>
           <div class="optionsValue">Live</div>
           <div class="optionsValue">Party</div>
           <div class="optionsValue">Pop</div>
@@ -248,12 +260,13 @@
           <div class="optionsValue">Full Base</div>
           <div class="optionsValue">Full Treble</div>
           <div class="optionsValue">Laptop Speakers</div>
-          <div class="optionsValue">Full Bass & Treble</div>
-        </div> -->
-    <!-- </div> -->
-    <!-- <div id="reset">RESET</div>
+          <div class="optionsValue">Full Bass & Treble</div> -->
+
+      <!-- </select> -->
+      <!-- </div> -->
+      <div id="reset">RESET</div>
       <div id="close">Close</div>
-    </div> -->
+    </div>
     <script src="js/index.js"></script>
   </body>
 </html>
