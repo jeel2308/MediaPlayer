@@ -262,8 +262,16 @@ function handleInitialGain() {
     handleGain([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
     // localStorage.setItem("check", false);
     let window2 = remote.getGlobal("window2");
-    if (window2) {
-      window2.webContents.send("reset");
+    if (window2) window2.webContents.send("reset");
+    else {
+      localStorage.setItem(
+        "frequency",
+        JSON.stringify({
+          mode: "Default",
+          gain: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        })
+      );
+      localStorage.setItem("check", false);
     }
   }
 }
