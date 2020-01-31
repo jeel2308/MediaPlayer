@@ -16,20 +16,20 @@ const currentTime = document.getElementById("currenttime");
 const remainingTime = document.getElementById("remainingtime");
 const thumbnail = document.getElementById("thumbnail");
 const subtitles = document.getElementById("subtitles");
-let subtitleDisplay = document.getElementById("displaySubtitles");
-let firstsource = document.getElementById("firstsource");
-console.log(firstsource);
-let firstThumbnail = document.getElementById("firstThumbnail");
-let englishSubtitle = document.getElementById("cue");
+const subtitleDisplay = document.getElementById("displaySubtitles");
+const firstsource = document.getElementById("firstsource");
+
+const firstThumbnail = document.getElementById("firstThumbnail");
+const englishSubtitle = document.getElementById("cue");
 const loop = document.getElementById("loop");
-var next = document.getElementById("next");
-var back = document.getElementById("back");
+const next = document.getElementById("next");
+const back = document.getElementById("back");
 const title = document.getElementById("title");
 const canvas = document.getElementById("canvas");
 const screenshot = document.getElementById("screenshot");
 const sscontainer = document.getElementById("sscontainer");
 const close = document.getElementById("close");
-var save = document.getElementById("save");
+const save = document.getElementById("save");
 const subtitleSync = document.getElementById("subtitleSync");
 const syncForm = document.getElementById("syncForm");
 const numb = document.getElementById("numb");
@@ -46,30 +46,59 @@ const numb = document.getElementById("numb");
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 const audiocontext = new AudioContext();
 // //const track = audiocontext.createMediaElementSource(audio);
-let videoTrack = audiocontext.createMediaElementSource(video);
-let biquadFilter = audiocontext.createBiquadFilter();
+const videoTrack = audiocontext.createMediaElementSource(video);
+const biquadFilter = audiocontext.createBiquadFilter();
 const Filters = [];
 const len = 8;
-let highPass = audiocontext.createBiquadFilter();
+const highPass = audiocontext.createBiquadFilter();
 // const options = document.getElementById("options");
 // const optionValues = document.getElementsByClassName("optionsValue");
 // const selectValue = document.getElementById("selectValue");
 //function definitions
 // console.log(new Date());
 video.setAttribute("preload", "metadata");
-function volchange(data) {
-  if (data === "+") {
-    if (video.volume < 1) {
-      video.volume += 0.1;
-    }
-    toggleVolumeDisplay.changeDisplay();
-  } else if (data === "-") {
-    if (video.volume > 0) {
-      video.volume -= 0.1;
-    }
-    toggleVolumeDisplay.changeDisplay();
-  }
+
+//**********************************CONSTRUCTORS **********************/
+function ToggleScreen() {
+  let timer = 0;
+  this.clearTimer = () => {
+    clearTimeout(timer);
+    timer = 0;
+    hideControls(false);
+  };
+  this.setTimer = timerId => {
+    timer = timerId;
+  };
+  this.activateTimer = () => {
+    togglescreen.clearTimer();
+    const timer = setTimeout(function() {
+      hideControls(true);
+    }, 5000);
+    togglescreen.setTimer(timer);
+  };
 }
+
+function ToggleVolumeDisplay() {
+  let timer = 0;
+  this.changeDisplay = () => {
+    showVolume.innerText = Math.floor(video.volume * 100);
+    showVolume.style.display = "block";
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      showVolume.style.display = "none";
+    }, 5000);
+  };
+}
+
+const volchange = data => {
+  if (data === "+") {
+    if (video.volume < 1) video.volume += 0.1;
+  } else {
+    // } else if (data === "-") {
+    if (video.volume > 0) video.volume -= 0.1;
+  }
+  toggleVolumeDisplay.changeDisplay();
+};
 
 function isFullScreen() {
   return !!(
@@ -81,7 +110,7 @@ function isFullScreen() {
   );
 }
 
-function displayTime(Time) {
+const displayTime = Time => {
   let currentTime = Math.floor(Time);
   let seconds = currentTime % 60;
   let minutes = Math.floor(currentTime / 60);
@@ -89,9 +118,9 @@ function displayTime(Time) {
   let hour = Math.floor(currentTime / 3600);
   let time = hour + ":" + minutes + ":" + seconds;
   return time;
-}
+};
 
-function handleFullScreen() {
+const handleFullScreen = () => {
   if (isFullScreen()) {
     if (document.exitFullscreen) document.exitFullscreen();
     else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
@@ -109,9 +138,9 @@ function handleFullScreen() {
     fullscreen.innerHTML = '<img src="icons/minimize.png" />';
   }
   videoContainer.focus();
-}
+};
 
-function skip(data, numb) {
+const skip = (data, numb) => {
   if (data === "+") {
     if (video.currentTime + numb <= video.duration) video.currentTime += numb;
     else video.currentTime = video.duration;
@@ -119,23 +148,23 @@ function skip(data, numb) {
     if (video.currentTime - numb >= 0) video.currentTime -= numb;
     else video.currentTime = 0;
   }
-}
+};
 
-function changeSubtitleDisplay(obj) {
+const changeSubtitleDisplay = obj => {
   if (obj.activeCues[0] !== undefined) {
     let text = obj.activeCues[0].text;
     subtitleDisplay.innerHTML = text;
   } //activeCues will be undefined when cue finishes.
   else subtitleDisplay.innerHTML = "";
-}
+};
 
-function subtitlePosition(state) {
+const subtitlePosition = state => {
   if (state === true) {
     subtitleDisplay.style.bottom = 65 + "px";
   } else subtitleDisplay.style.bottom = 85 + "px";
-}
+};
 
-function hideControls(state) {
+const hideControls = state => {
   if (state === true) {
     controls.style.display = "none";
     progress.style.display = "none";
@@ -148,18 +177,6 @@ function hideControls(state) {
     currentTime.style.display = "block";
     remainingTime.style.display = "block";
     subtitlePosition(false);
-  }
-}
-
-let toggleControls = function() {
-  if (!(video.paused || video.ended)) {
-    hideControls(false);
-    clearTimeout(togglescreen.timer);
-    togglescreen.timer = setTimeout(function() {
-      hideControls(true);
-    }, 10000);
-  } else {
-    hideControls(false);
   }
 };
 
@@ -239,11 +256,11 @@ function handlePlayPause() {
   if (video.paused || video.ended) {
     video.play();
     playpause.innerHTML = '<img src="icons/pause.png" />';
-    togglescreen.addEvent();
+    togglescreen.activateTimer();
   } else {
     video.pause();
     playpause.innerHTML = '<img src="icons/play.png" />';
-    togglescreen.removeEvent();
+    togglescreen.clearTimer();
   }
   videoContainer.focus();
 }
@@ -321,7 +338,7 @@ let handleLoading = function(args) {
   playpause.innerHTML = '<img src="icons/play.png" />';
   progressbar.style.width = 0;
   subtitleDisplay.innerHTML = "";
-  togglescreen.removeEvent();
+  togglescreen.clearTimer();
   video.load();
   thumbnail.load();
   handlePlayPause();
@@ -346,7 +363,7 @@ function handleTracks(subtitlePath) {
   });
   //subtitles.style.display = "block";
 }
-console.log(video.textTracks[0]);
+
 function handleLoop() {
   let src = loop.firstChild.src;
 
@@ -360,30 +377,21 @@ function handleLoop() {
   videoContainer.focus();
 }
 
-const togglescreen = {
-  timer: 0,
-  addEvent: function() {
-    toggleControls();
-    videoContainer.addEventListener("mousemove", toggleControls);
-  },
-  removeEvent: function() {
-    clearInterval(this.timer);
-    videoContainer.removeEventListener("mousemove", toggleControls);
-    hideControls(false);
-  }
-};
+// const togglescreen = {
+//   timer: 0,
+//   addEvent: function() {
+//     toggleControls();
+//     //videoContainer.addEventListener("mousemove", toggleControls);
+//   },
+//   removeEvent: function() {
+//     clearInterval(togglescreen.timer);
+//     //videoContainer.removeEventListener("mousemove", toggleControls);
+//     hideControls(false);
+//   }
+// };
+const togglescreen = new ToggleScreen();
 
-const toggleVolumeDisplay = {
-  timer: 0,
-  changeDisplay() {
-    showVolume.innerText = Math.floor(video.volume * 100);
-    showVolume.style.display = "block";
-    clearInterval(this.timer);
-    this.timer = setInterval(function() {
-      showVolume.style.display = "none";
-    }, 5000);
-  }
-};
+const toggleVolumeDisplay = new ToggleVolumeDisplay();
 
 video.controls = false;
 let supportFs = !!(
@@ -457,7 +465,7 @@ stop.addEventListener("click", function() {
   video.currentTime = 0;
   progressbar.style.width = 0;
   playpause.innerHTML = '<img src="icons/play.png" />';
-  togglescreen.removeEvent();
+  togglescreen.clearTimer();
   videoContainer.focus();
 });
 
@@ -487,6 +495,7 @@ progress.addEventListener("click", function(e) {
   video.currentTime =
     ((e.pageX - this.offsetLeft) / this.offsetWidth) * video.duration;
   videoContainer.focus();
+  togglescreen.setTimer();
 });
 
 volinc.addEventListener("click", function(event) {
@@ -598,3 +607,7 @@ function handleGain(gains) {
 
   highPass.gain.value = gains[9];
 }
+
+videoContainer.addEventListener("mousemove", event => {
+  if (video.play) togglescreen.activateTimer();
+});
