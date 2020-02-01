@@ -1,6 +1,5 @@
 const video = document.getElementById("myvideo");
 const playpause = document.getElementById("playpause");
-const stop = document.getElementById("stop");
 const progressbar = document.getElementById("progressbar");
 const progress = document.getElementById("progress");
 const volinc = document.getElementById("volume+");
@@ -90,65 +89,305 @@ function ToggleVolumeDisplay() {
   };
 }
 
-const volchange = data => {
-  if (data === "+") {
-    if (video.volume < 1) video.volume += 0.1;
-  } else {
-    // } else if (data === "-") {
-    if (video.volume > 0) video.volume -= 0.1;
-  }
-  toggleVolumeDisplay.changeDisplay();
-};
+function VideoControls() {
+  const video = document.getElementById("myvideo");
+  const videoContainer = document.getElementById("container");
+  const fullscreen = document.getElementById("fullscreen");
+  const volinc = document.getElementById("volume+");
+  const progressbar = document.getElementById("progressbar");
+  const progress = document.getElementById("progress");
+  const playpause = document.getElementById("playpause");
+  const skipahead = document.getElementById("skipahead");
+  const skipbackward = document.getElementById("skipbackward");
+  const loop = document.getElementById("loop");
+  const mute = document.getElementById("mute");
+  const voldec = document.getElementById("volume-");
+  const currentTime = document.getElementById("currenttime");
+  const remainingTime = document.getElementById("remainingtime");
+  const subtitles = document.getElementById("subtitles");
+  const subtitleDisplay = document.getElementById("displaySubtitles");
 
-function isFullScreen() {
-  return !!(
-    document.fullScreen ||
-    document.webkitIsFullScreen ||
-    document.mozFullScreen ||
-    document.msFullscreenElement ||
-    document.fullscreenElement
+  document.addEventListener("webkitfullscreenchange", function(e) {
+    if (!isFullScreen()) {
+      fullscreen.innerHTML = '<img src="icons/maximize.png" />';
+      videoContainer.focus(); //this won't work if tabindex is not specified for nonfocusable elements.
+    }
+  });
+
+  document.addEventListener("keydown", function(event) {
+    if (isFullScreen()) {
+      controlKeys(event);
+    }
+  });
+
+  videoContainer.addEventListener("dblclick", () => {
+    handleFullScreen();
+  });
+
+  videoContainer.addEventListener("keydown", event => {
+    if (!isFullScreen()) {
+      controlKeys(event);
+    }
+  });
+
+  videoContainer.addEventListener("click", () => {
+    videoContainer.focus();
+  });
+  video.addEventListener("loadedmetadata", () => {
+    currentTime.innerHTML = `${displayTime(0)}/${displayTime(video.duration)}`;
+    remainingTime.innerHTML =
+      `${displayTime(video.duration)}` + "/" + `${displayTime(video.duration)}`;
+    disableSubtitle();
+  });
+
+  videoContainer.addEventListener("mousemove", event => {
+    if (video.play) togglescreen.activateTimer();
+  });
+
+  voldec.addEventListener("click", e => {
+    volchange("-");
+    videoContainer.focus();
+  });
+
+  mute.addEventListener("click", () => {
+    video.muted = !video.muted;
+    if (!video.muted) {
+      mute.innerHTML = '<img src="icons/mute.png" />';
+    } else mute.innerHTML = '<img src="icons/unmute.png" />';
+    videoContainer.focus();
+  });
+
+  fullscreen.addEventListener("click", () => {
+    handleFullScreen();
+  });
+
+  loop.addEventListener("click", () => {
+    handleLoop();
+  });
+
+  skipahead.addEventListener("click", () => {
+    skip("+", 10);
+    videoContainer.focus();
+  });
+
+  skipbackward.addEventListener("click", () => {
+    skip("-", 10);
+    videoContainer.focus();
+  });
+
+  playpause.addEventListener("click", () => {
+    this.handlePlayPause();
+  });
+
+  video.addEventListener("timeupdate", () => {
+    progressbar.style.width = (video.currentTime / video.duration) * 100 + "%";
+    if (video.currentTime === video.duration) {
+      togglescreen.clearTimer();
+      playpause.innerHTML = '<img src="icons/play.png" />';
+    }
+    //NaN===NaN is false. so do not try like this:
+    // if(video.duration===NaN) return;
+    if (video.duration) {
+      currentTime.innerHTML =
+        `${displayTime(video.currentTime)}` +
+        "/" +
+        `${displayTime(video.duration)}`;
+      remainingTime.innerHTML =
+        `${displayTime(video.duration - video.currentTime)}` +
+        "/" +
+        `${displayTime(video.duration)}`;
+    }
+  });
+
+  progress.addEventListener("click", e => {
+    progressbar.style.width =
+      ((e.pageX - this.offsetLeft) / this.offsetWidth) * 100 + "%";
+    video.currentTime =
+      ((e.pageX - this.offsetLeft) / this.offsetWidth) * video.duration;
+    videoContainer.focus();
+    togglescreen.setTimer();
+  });
+
+  progress.addEventListener("mousemove", event =>
+    handleThumbnail.changeThumbnail(event)
   );
+
+  progress.addEventListener("mouseout", () => {
+    handleThumbnail.setState(false);
+  });
+
+  volinc.addEventListener("click", event => {
+    volchange("+");
+    videoContainer.focus();
+  });
+
+  subtitles.addEventListener("click", function() {
+    if (video.textTracks[0].mode === "disabled") {
+      video.textTracks[0].mode = "hidden";
+    } else {
+      video.textTracks[0].mode = "disabled";
+      subtitleDisplay.innerHTML = "";
+    }
+  });
+
+  const displayTime = Time => {
+    let currentTime = Math.floor(Time);
+    let seconds = currentTime % 60;
+    let minutes = Math.floor(currentTime / 60);
+    minutes = minutes % 60;
+    let hour = Math.floor(currentTime / 3600);
+    let time = hour + ":" + minutes + ":" + seconds;
+    return time;
+  };
+
+  const volchange = data => {
+    if (data === "+") {
+      if (video.volume < 1) video.volume += 0.1;
+    } else {
+      // } else if (data === "-") {
+      if (video.volume > 0) video.volume -= 0.1;
+    }
+    toggleVolumeDisplay.changeDisplay();
+  };
+
+  const skip = (data, numb) => {
+    if (data === "+") {
+      if (video.currentTime + numb <= video.duration) video.currentTime += numb;
+      else video.currentTime = video.duration;
+    } else if (data === "-") {
+      if (video.currentTime - numb >= 0) video.currentTime -= numb;
+      else video.currentTime = 0;
+    }
+  };
+
+  const handleLoop = () => {
+    let src = loop.firstChild.src;
+    if (src.indexOf("loop.png") >= 0) {
+      loop.firstChild.src = "icons/loop2.png";
+      video.loop = true;
+    } else {
+      loop.firstChild.src = "icons/loop.png";
+      video.loop = false;
+    }
+    videoContainer.focus();
+  };
+  const handleFullScreen = () => {
+    if (this.isFullScreen()) {
+      if (document.exitFullscreen) document.exitFullscreen();
+      else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+      else if (document.webkitCancelFullScreen)
+        document.webkitCancelFullScreen();
+      else if (document.msExitFullscreen) document.msExitFullscreen();
+      fullscreen.innerHTML = '<img src="icons/maximize.png" />';
+    } else {
+      if (videoContainer.requestFullscreen) document.body.requestFullscreen();
+      else if (videoContainer.mozRequestFullScreen)
+        document.body.mozRequestFullScreen();
+      else if (videoContainer.webkitRequestFullScreen)
+        document.body.webkitRequestFullScreen();
+      else if (videoContainer.msRequestFullscreen)
+        document.body.msRequestFullscreen();
+      fullscreen.innerHTML = '<img src="icons/minimize.png" />';
+    }
+    videoContainer.focus();
+  };
+  const controlKeys = event => {
+    const key = event.key;
+    switch (key) {
+      case "ArrowUp":
+        volchange("+");
+        break;
+      case "ArrowDown":
+        volchange("-");
+        break;
+
+      case "ArrowLeft":
+        skip("-", 10);
+        break;
+
+      case "ArrowRight":
+        skip("+", 10);
+        break;
+
+      case "B":
+      case "b":
+        skip("-", 20);
+        break;
+      case "F":
+      case "f":
+        skip("+", 20);
+        break;
+      case " ":
+        this.handlePlayPause();
+        break;
+      case "s":
+      case "S":
+        takeScreenShot();
+        break;
+    }
+  };
+  this.getProgress = () => progress;
+  this.handlePlayPause = () => {
+    if (video.paused || video.ended) {
+      video.play();
+      playpause.innerHTML = '<img src="icons/pause.png" />';
+      togglescreen.activateTimer();
+    } else {
+      video.pause();
+      playpause.innerHTML = '<img src="icons/play.png" />';
+      togglescreen.clearTimer();
+    }
+    videoContainer.focus();
+  };
+  const isFullScreen = () => {
+    return !!(
+      document.fullScreen ||
+      document.webkitIsFullScreen ||
+      document.mozFullScreen ||
+      document.msFullscreenElement ||
+      document.fullscreenElement
+    );
+  };
+
+  this.disableSubtitle = () => {
+    for (var i = 0; i < video.textTracks.length; i++) {
+      //to disable all subtitle by default.
+      video.textTracks[i].mode = "disabled";
+    }
+  };
 }
 
-const displayTime = Time => {
-  let currentTime = Math.floor(Time);
-  let seconds = currentTime % 60;
-  let minutes = Math.floor(currentTime / 60);
-  minutes = minutes % 60;
-  let hour = Math.floor(currentTime / 3600);
-  let time = hour + ":" + minutes + ":" + seconds;
-  return time;
-};
+function HandleThumbnail() {
+  const thumbnail = document.getElementById("thumbnail");
+  this.load = () => {
+    thumbnail.load();
+  };
+  this.changeThumbnail = event => {
+    const progress = videoControls.getProgress();
+    let left = progress.offsetLeft;
+    let right = progress.offsetLeft + progress.offsetWidth;
+    let current = event.pageX;
+    let currentTime =
+      (Math.floor(current - left) / progress.offsetWidth) * video.duration;
+    thumbnail.currentTime = currentTime;
+    this.setState(true);
+    let widthOfThubnail = thumbnail.offsetWidth / 2;
 
-const handleFullScreen = () => {
-  if (isFullScreen()) {
-    if (document.exitFullscreen) document.exitFullscreen();
-    else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
-    else if (document.webkitCancelFullScreen) document.webkitCancelFullScreen();
-    else if (document.msExitFullscreen) document.msExitFullscreen();
-    fullscreen.innerHTML = '<img src="icons/maximize.png" />';
-  } else {
-    if (videoContainer.requestFullscreen) document.body.requestFullscreen();
-    else if (videoContainer.mozRequestFullScreen)
-      document.body.mozRequestFullScreen();
-    else if (videoContainer.webkitRequestFullScreen)
-      document.body.webkitRequestFullScreen();
-    else if (videoContainer.msRequestFullscreen)
-      document.body.msRequestFullscreen();
-    fullscreen.innerHTML = '<img src="icons/minimize.png" />';
-  }
-  videoContainer.focus();
-};
-
-const skip = (data, numb) => {
-  if (data === "+") {
-    if (video.currentTime + numb <= video.duration) video.currentTime += numb;
-    else video.currentTime = video.duration;
-  } else if (data === "-") {
-    if (video.currentTime - numb >= 0) video.currentTime -= numb;
-    else video.currentTime = 0;
-  }
-};
+    if (current < widthOfThubnail) {
+      thumbnail.style.left = 0;
+    } else if (current + widthOfThubnail > right) {
+      thumbnail.style.right = 0;
+    } else {
+      thumbnail.style.left = `${current - widthOfThubnail}px`;
+    }
+  };
+  this.setState = state => {
+    thumbnail.setAttribute("data-display", state);
+  };
+}
+/*********************Constructors****************************/
+const videoControls = new VideoControls();
+const handleThumbnail = new HandleThumbnail();
 
 const changeSubtitleDisplay = obj => {
   if (obj.activeCues[0] !== undefined) {
@@ -180,63 +419,9 @@ const hideControls = state => {
   }
 };
 
-function changeThumbnail(event) {
-  let left = progress.offsetLeft;
-  let right = progress.offsetLeft + progress.offsetWidth;
-  let current = event.pageX;
-  let currentTime =
-    (Math.floor(current - left) / progress.offsetWidth) * video.duration;
-  thumbnail.currentTime = currentTime;
-  changeThumbnailState(true);
-  let widthOfThubnail = thumbnail.offsetWidth / 2;
-
-  if (current < widthOfThubnail) {
-    thumbnail.style.left = 0;
-  } else if (current + widthOfThubnail > right) {
-    thumbnail.style.right = 0;
-  } else {
-    thumbnail.style.left = `${current - widthOfThubnail}px`;
-  }
-}
-
-function changeThumbnailState(state) {
-  thumbnail.setAttribute("data-display", !!state);
-}
+function changeThumbnailState(state) {}
 
 function controlKeys(event) {
-  let key = event.key;
-  switch (key) {
-    case "ArrowUp":
-      volchange("+");
-      break;
-    case "ArrowDown":
-      volchange("-");
-      break;
-
-    case "ArrowLeft":
-      skip("-", 10);
-      break;
-
-    case "ArrowRight":
-      skip("+", 10);
-      break;
-
-    case "B":
-    case "b":
-      skip("-", 20);
-      break;
-    case "F":
-    case "f":
-      skip("+", 20);
-      break;
-    case " ":
-      handlePlayPause();
-      break;
-    case "s":
-    case "S":
-      takeScreenShot();
-      break;
-  }
   // if (event.key === "ArrowUp") {
   //   volchange("+");
   // } else if (event.key === "ArrowDown") volchange("-");
@@ -250,41 +435,6 @@ function controlKeys(event) {
   //   handlePlayPause();
   // }
   //  else if()
-}
-
-function handlePlayPause() {
-  if (video.paused || video.ended) {
-    video.play();
-    playpause.innerHTML = '<img src="icons/pause.png" />';
-    togglescreen.activateTimer();
-  } else {
-    video.pause();
-    playpause.innerHTML = '<img src="icons/play.png" />';
-    togglescreen.clearTimer();
-  }
-  videoContainer.focus();
-}
-
-function takeScreenShot() {
-  if (sscontainer.style.display !== "block") {
-    let ctx = canvas.getContext("2d");
-    canvas.height =
-      (parseInt(videoContainer.style.height) * window.innerHeight) / 100;
-    canvas.width =
-      (parseInt(videoContainer.style.width) * window.innerHeight) / 100;
-
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    let dataURI = canvas.toDataURL("image/jpeg");
-
-    sscontainer.style.display = "block";
-    sscontainer.style.zIndex = "1";
-    screenshot.src = dataURI;
-    screenshot.style.height = `${canvas.height}px`;
-    screenshot.style.width = `${canvas.width}px`;
-    save.href = dataURI;
-    // console.log(dataURI);
-    handlePlayPause();
-  }
 }
 
 // let subtitleMenuButtons = [];
@@ -317,12 +467,7 @@ function takeScreenShot() {
 //   return listItem;
 // };
 
-function disableSubtitle() {
-  for (var i = 0; i < video.textTracks.length; i++) {
-    //to disable all subtitle by default.
-    video.textTracks[i].mode = "disabled";
-  }
-}
+function disableSubtitle() {}
 
 let handleLoading = function(args) {
   args = args.replace(/\s/g, "%20");
@@ -340,8 +485,8 @@ let handleLoading = function(args) {
   subtitleDisplay.innerHTML = "";
   togglescreen.clearTimer();
   video.load();
-  thumbnail.load();
-  handlePlayPause();
+  handleThumbnail.load();
+  videoControls.handlePlayPause();
   video.play();
 };
 
@@ -363,20 +508,6 @@ function handleTracks(subtitlePath) {
   });
   //subtitles.style.display = "block";
 }
-
-function handleLoop() {
-  let src = loop.firstChild.src;
-
-  if (src.indexOf("loop.png") >= 0) {
-    loop.firstChild.src = "icons/loop2.png";
-    video.loop = true;
-  } else {
-    loop.firstChild.src = "icons/loop.png";
-    video.loop = false;
-  }
-  videoContainer.focus();
-}
-
 // const togglescreen = {
 //   timer: 0,
 //   addEvent: function() {
@@ -407,169 +538,14 @@ if (!supportFs) {
   fullscreen.style.display = "none";
 }
 
-// let subtitlesMenu;
-// if (video.textTracks) {
-//   let df = document.createDocumentFragment();
-//   subtitlesMenu = df.appendChild(document.createElement("ul"));
-//   subtitlesMenu.className = "subtitles-menu";
-//   subtitlesMenu.appendChild(createMenuItem("subtitles-off", "", "Off"));
-//   for (let i = 0; i < video.textTracks.length; i++) {
-//     subtitlesMenu.appendChild(
-//       createMenuItem(
-//         "subtitles-" + video.textTracks[i].language,
-//         video.textTracks[i].language,
-//         video.textTracks[i].label
-//       )
-//     );
-
-//   }
-//   videoContainer.appendChild(df);
-// }
-
 //event listeners
-document.addEventListener("fullscreenchange", function(e) {
-  if (!isFullScreen()) {
-    fullscreen.innerHTML = '<img src="icons/maximize.png" />';
-    videoContainer.focus(); //this won't work if tabindex is not specified for nonfocusable elements.
-  }
-});
-
-document.addEventListener("webkitfullscreenchange", function(e) {
-  if (!isFullScreen()) {
-    fullscreen.innerHTML = '<img src="icons/maximize.png" />';
-    videoContainer.focus(); //this won't work if tabindex is not specified for nonfocusable elements.
-  }
-});
-
-document.addEventListener("msfullscreenchange", function(e) {
-  if (!isFullScreen()) {
-    fullscreen.innerHTML = '<img src="icons/maximize.png" />';
-    videoContainer.focus(); //this won't work if tabindex is not specified for nonfocusable elements.
-  }
-});
-
-skipahead.addEventListener("click", function() {
-  skip("+", 10);
-  videoContainer.focus();
-});
-
-skipbackward.addEventListener("click", function() {
-  skip("-", 10);
-  videoContainer.focus();
-});
-
-playpause.addEventListener("click", handlePlayPause);
-
-stop.addEventListener("click", function() {
-  video.pause();
-  video.currentTime = 0;
-  progressbar.style.width = 0;
-  playpause.innerHTML = '<img src="icons/play.png" />';
-  togglescreen.clearTimer();
-  videoContainer.focus();
-});
-
-video.addEventListener("timeupdate", function() {
-  progressbar.style.width = (video.currentTime / video.duration) * 100 + "%";
-  if (video.currentTime === video.duration) {
-    togglescreen.removeEvent();
-    playpause.innerHTML = '<img src="icons/play.png" />';
-  }
-  //NaN===NaN is false. so do not try like this:
-  // if(video.duration===NaN) return;
-  if (video.duration) {
-    currentTime.innerHTML =
-      `${displayTime(video.currentTime)}` +
-      "/" +
-      `${displayTime(video.duration)}`;
-    remainingTime.innerHTML =
-      `${displayTime(video.duration - video.currentTime)}` +
-      "/" +
-      `${displayTime(video.duration)}`;
-  }
-});
-
-progress.addEventListener("click", function(e) {
-  progressbar.style.width =
-    ((e.pageX - this.offsetLeft) / this.offsetWidth) * 100 + "%";
-  video.currentTime =
-    ((e.pageX - this.offsetLeft) / this.offsetWidth) * video.duration;
-  videoContainer.focus();
-  togglescreen.setTimer();
-});
-
-volinc.addEventListener("click", function(event) {
-  volchange("+");
-  videoContainer.focus();
-});
-
-videoContainer.addEventListener("dblclick", function() {
-  handleFullScreen();
-});
-
-videoContainer.addEventListener("keydown", function(event) {
-  if (!isFullScreen()) {
-    controlKeys(event);
-  }
-});
-
-videoContainer.addEventListener("click", function() {
-  videoContainer.focus();
-});
-
-document.addEventListener("keydown", function(event) {
-  if (isFullScreen()) {
-    controlKeys(event);
-  }
-});
-
-voldec.addEventListener("click", function(e) {
-  volchange("-");
-  videoContainer.focus();
-});
-
-mute.addEventListener("click", function() {
-  video.muted = !video.muted;
-  if (!video.muted) {
-    mute.innerHTML = '<img src="icons/mute.png" />';
-  } else mute.innerHTML = '<img src="icons/unmute.png" />';
-  videoContainer.focus();
-});
-
-fullscreen.addEventListener("click", handleFullScreen);
-
-video.addEventListener("loadedmetadata", function() {
-  currentTime.innerHTML = `${displayTime(0)}/${displayTime(video.duration)}`;
-  remainingTime.innerHTML =
-    `${displayTime(video.duration)}` + "/" + `${displayTime(video.duration)}`;
-  disableSubtitle();
-});
-
-progress.addEventListener("mousemove", function(event) {
-  changeThumbnail(event);
-});
-
-progress.addEventListener("mouseout", function() {
-  changeThumbnailState(false);
-});
-loop.addEventListener("click", handleLoop);
-
-subtitles.addEventListener("click", function() {
-  if (video.textTracks[0].mode === "disabled") {
-    video.textTracks[0].mode = "hidden";
-  } else {
-    video.textTracks[0].mode = "disabled";
-    subtitleDisplay.innerHTML = "";
-  }
-});
 
 close.addEventListener("click", function() {
-  console.log("event happened");
   sscontainer.style.display = "none";
   sscontainer.style.zIndex = "-2";
   screenshot.src = "";
   videoContainer.focus();
-  handlePlayPause();
+  videoControls.handlePlayPause();
 });
 // console.log(new Date());
 
@@ -607,7 +583,3 @@ function handleGain(gains) {
 
   highPass.gain.value = gains[9];
 }
-
-videoContainer.addEventListener("mousemove", event => {
-  if (video.play) togglescreen.activateTimer();
-});
