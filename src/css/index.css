@@ -1,0 +1,18 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+#controlsContainer {
+  position: relative;
+  padding: 3px 0px;
+  bottom: 0px;
+  width: 100%;
+  background-color: none;
+  position: fixed;
+}
+#video-player {
+  display: flex;
+  flex-direction: column;
+  background-color: black;
+}

@@ -1,0 +1,24 @@
+#controls {
+  display: flex;
+  z-index: 1;
+  flex-direction: column;
+  padding: 16px 0;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+}
+#controls__second {
+  display: flex;
+  flex-direction: row;
+  color: white;
+  padding: 0 1.5%;
+  align-items: center;
+}
+#controls__second__center {
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  align-items: center;
+}

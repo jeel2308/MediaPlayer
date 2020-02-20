@@ -1,38 +1,20 @@
-# MediaPlayer
-This is a  videoPlayer built from electronjs for Windows. 
+### 🙋‍♂️ Made by [@thekitze](https://twitter.com/thekitze)  
 
-## Getting-started
+### Other projects:
+- 🏫 [React Academy](https://reactacademy.io) - Interactive React and GraphQL workshops
+- 💌 [Twizzy](https://twizzy.app) - A standalone app for Twitter DM
+- 💻 [Sizzy](https://sizzy.co) - A tool for testing responsive design on multiple devices at once
+- 🤖 [JSUI](https://github.com/kitze/JSUI) - A powerful UI toolkit for managing JavaScript apps
 
-### Builds
-Download zip file from [here](https://github.com/jeel2308/MediaPlayer/releases/download/v1.0.1/media-player-win32-x64.zip)
+---
 
-### Development/Testing
-You  need to have installed `NodeJS`.
+# React + Electron = 😍
 
-After cloning the repo, go to root folder and run following,
-```
-npm install
-```
-This will install all required dependencies.After doing this run following,
-```
-npm start
-```
-This will start electron app.
+An example of using create-react-app and Electron.
 
-### Features
-- You can select your playlist by `Select Folder`.
+## Scripts
+```yarn start``` will start the Electron app and the React app at the same time.  
+```yarn build``` will build the React app and package it along the Electron app.
 
-- You can choose subtitle from different folder.If you have subtitle with same name as video file and both are in same folder then subtitle   will be choosen automatically.
-
-- Shortcut keys
-
-  |  key  |  action  |
-  |  ---  |  ---  |
-  |  Space  |  Play/Pause Video  |
-  |  S/s  |  ScreenShot  |
-  | left/Right Arrow keys | Move forward/backward 10 seconds  |
-  | Top/Bottom Arrow keys | Change Volume  |
-  | P/p | Previous video from Playlist |
-  | N/n | Next video from Playlist |
-  | B/b | move backward 20 seconds |
-  | F/f | move forward 20 seconds |
+## Read more
+You can read more about it in [my Medium article](https://medium.com/@kitze/%EF%B8%8F-from-react-to-an-electron-app-ready-for-production-a0468ecb1da3).

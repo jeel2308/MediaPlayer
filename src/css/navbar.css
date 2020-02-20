@@ -1,0 +1,79 @@
+.navbar,
+.container-fluid {
+  padding: 0;
+}
+
+.ctrlBtns {
+  border: 0px solid white;
+  background-color: white;
+  padding: 0 2.5px;
+  margin: 5px px;
+}
+.ctrlBtns:hover {
+  color: white;
+  background-color: black;
+  cursor: pointer;
+}
+.closeBtn {
+  margin: auto;
+  font-size: 25px;
+}
+.navbar_img:last-child:hover {
+  background-color: red;
+}
+.ctrlBtns img {
+  width: 24px;
+  height: 24px;
+}
+
+#navbar {
+  background-color: rgba(255, 255, 255, 0.3);
+  color: white;
+  display: flex;
+  flex-direction: row;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  list-style-type: none;
+}
+.navbar_li {
+  margin: 4px 5px;
+}
+.navbar_li:hover {
+  cursor: pointer;
+  background-color: rgba(255, 255, 255, 0.3);
+}
+.navbar_img {
+  /* border: 1px solid white; */
+  /* background-color: rgba(255, 255, 255, 0.3); */
+  color: white;
+  padding: 0px 10px;
+  margin: auto 0px;
+  height: 25px;
+  display: flex;
+}
+.navbar_img:hover {
+  cursor: pointer;
+  background-color: rgba(255, 255, 255, 0.3);
+}
+#navbar_right {
+  margin-left: auto;
+}
+#window-minimize {
+  width: 16px;
+  height: 3px;
+  background-color: white;
+  margin: auto;
+}
+
+#window-maximize {
+  margin: auto;
+  width: 16px;
+  height: 16px;
+  border: 2px solid white;
+  border-radius: 30%;
+  background-color: inherit;
+}

@@ -1,0 +1,43 @@
+.fontSize {
+  font-size: 20px;
+}
+.animate {
+  animation-name: anime;
+  animation-duration: 0.85s;
+  animation-fill-mode: forwards;
+}
+@keyframes anime {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+.play {
+  font-size: 50px;
+  color: white;
+}
+.playBigBtn {
+  color: white;
+  background-color: black;
+  font-size: 100px;
+  border-radius: 50%;
+}
+.fullscreen {
+  font-size: 20px;
+  color: white;
+}
+.hover:hover {
+  cursor: pointer;
+}
+.skipbtn {
+  font-size: 35px;
+}
+
+.wrapper,
+.volumeContainer {
+  margin: 0 20px;
+}

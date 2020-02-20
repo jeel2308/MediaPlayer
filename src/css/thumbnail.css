@@ -1,0 +1,10 @@
+#thumbnailContainer {
+  position: relative;
+  height: 100px;
+  width: 100px;
+}
+#thumbnail {
+  object-fit: contain;
+  height: 100px;
+  width: 100px;
+}

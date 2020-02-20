@@ -1,0 +1,44 @@
+.volumeBtnContainer {
+  margin-right: auto;
+  /* padding: 10px 150px 10px 0; */
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.volumeBtnIconContainer:hover {
+  cursor: pointer;
+}
+.volume {
+  font-size: 30px;
+}
+
+#volumeBarContainer {
+  position: absolute;
+  left: 30px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+}
+
+#volumeBar {
+  height: 6px;
+  width: 100px;
+  /* transition: width 0.8s; */
+  background-color: white;
+  border-radius: 5px;
+}
+#volumeBarContainer:hover {
+  cursor: pointer;
+}
+.volumeBtnContainer:hover #volumeBar {
+  width: 100px;
+}
+
+#videoVolume {
+  height: 100%;
+  width: 0px;
+  background-color: orange;
+  transition: width 1s;
+  border-radius: 5px;
+}
