@@ -5,8 +5,11 @@ class Thumbnail extends React.PureComponent {
     window.thumbnail = document.getElementById("thumbnail");
     e.target.pause();
   };
+  handleCurrentTime = element => {};
+  ref = React.createRef();
 
   render() {
+    window.thumbnail.currentTime = 5;
     return (
       <div
         id="thumbnailContainer"
@@ -17,6 +20,7 @@ class Thumbnail extends React.PureComponent {
           id="thumbnail"
           onLoadedMetadata={this.handleMetadata}
           controls={false}
+          ref={this}
         >
           <source src="C:\\Users\\vatsal\\Desktop\\project2\\src\\try.mkv" />
         </video>

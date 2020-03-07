@@ -12,6 +12,16 @@ class NavBar extends Component {
     if (url === "Not selected") return;
     this.props.updateUrl(url);
   };
+  handleFolder = async () => {
+    let url = await window.openDirectory();
+    if (url !== "not selected") {
+      url =
+        window.directory.replace(/\s/g, "%20").replace(/\\/g, "\\") +
+        "\\" +
+        window.directoryEntry[0].replace(/\s/g, "%20").replace(/\\/g, "\\");
+      this.props.updateUrl(url);
+    }
+  };
   handleMinimize = () => {
     if (window.handleMinimize) window.handleMinimize();
   };
@@ -31,7 +41,9 @@ class NavBar extends Component {
           <li className="navbar_li nav-item" onClick={this.handleFile}>
             Open File
           </li>
-          <li className="navbar_li nav-item">Open Folder</li>
+          <li className="navbar_li nav-item" onClick={this.handleFolder}>
+            Open Folder
+          </li>
           <li className="navbar_li nav-item" onClick={this.toggleDevTools}>
             DevTools
           </li>

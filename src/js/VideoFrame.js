@@ -1,14 +1,6 @@
 import React from "react";
 import "../css/videoFrame.css";
-// import Button from "./Button.js";
-// import { FaBackward, FaForward } from "react-icons/fa";
 import { MdReplay5 } from "react-icons/md";
-// import { MdPlayCircleOutline } from "react-icons/md";
-// import { IconContext } from "react-icons";
-// import Time from "./Time";
-// import FullScreen from "./FullScreen.js";
-// import Volume from "./Volume";
-// import Progress from "./Progress";
 import PlayBtn from "./PlayBtn";
 import SkipBtn from "./SkipBtn";
 import Controls from "./Controls";
@@ -28,8 +20,8 @@ class VideoFrame extends React.PureComponent {
     state: "play",
     fullScreen: "false",
     muted: false,
-    loop: false,
-    volume: 1
+    volume: 1,
+    loop: false
   };
   video = React.createRef();
   componentDidMount() {
@@ -118,12 +110,25 @@ class VideoFrame extends React.PureComponent {
   handleNext = () => {
     if (window.videoIndex + 1 <= window.directoryEntry.length - 1) {
       window.videoIndex++;
-      let url = (
-        window.directory +
-        "//" +
+      let url =
+        window.directory.replace(/\s/g, "%20").replace(/\\/g, "\\") +
+        "\\" +
         window.directoryEntry[window.videoIndex]
-      ).replace(/\s/g, "%20");
+          .replace(/\s/g, "%20")
+          .replace(/\\/g, "\\");
       // console.log(url);
+      this.props.updateUrl(url);
+    }
+  };
+  handlePrevious = () => {
+    if (window.videoIndex - 1 >= 0) {
+      window.videoIndex--;
+      let url =
+        window.directory.replace(/\s/g, "%20").replace(/\\/g, "\\") +
+        "\\" +
+        window.directoryEntry[window.videoIndex]
+          .replace(/\s/g, "%20")
+          .replace(/\\/g, "\\");
       this.props.updateUrl(url);
     }
   };
@@ -145,6 +150,12 @@ class VideoFrame extends React.PureComponent {
         volume: prevState.volume + volume
       }));
     }
+  };
+  handleLoop = () => {
+    this.video.current.loop = !this.video.current.loop;
+    this.setState(prevState => ({
+      loop: !prevState.loop
+    }));
   };
   handleMute = () => {
     this.video.current.muted = !this.video.current.muted;
@@ -185,6 +196,17 @@ class VideoFrame extends React.PureComponent {
     this.setState(() => ({
       state: "end"
     }));
+    if (!this.video.current.loop) {
+      if (window.videoIndex + 1 <= window.directoryEntry.length - 1) {
+        let url =
+          window.directory.replace(/\s/g, "%20").replace(/\\/g, "\\") +
+          "\\" +
+          window.directoryEntry[++window.videoIndex]
+            .replace(/\s/g, "%20")
+            .replace(/\\/g, "\\");
+        this.props.updateUrl(url);
+      }
+    }
   };
 
   setVideoState = e => {
@@ -239,17 +261,6 @@ class VideoFrame extends React.PureComponent {
             />
             Video tag is not supported.
           </video>
-          {this.state.state !== "end" && this.state.state !== "canPlay" ? (
-            <div className="largePlayBtn">
-              <PlayBtn
-                state={this.state.state}
-                size="large"
-                classValue={"playBigBtn animate"}
-              />
-            </div>
-          ) : (
-            undefined
-          )}
           <Controls
             data={{
               duration: this.state.duration,
@@ -257,7 +268,8 @@ class VideoFrame extends React.PureComponent {
               volume: this.state.volume,
               state: this.state.state,
               muted: this.state.muted,
-              url: this.props.url
+              url: this.props.url,
+              loop: this.state.loop
             }}
             handlers={{
               handleCurrentTime: this.handleCurrentTime,
@@ -267,7 +279,9 @@ class VideoFrame extends React.PureComponent {
               handleFullScreen: this.handleFullScreen,
               handleVolume: this.handleVolume,
               handleMute: this.handleMute,
-              handleNext: this.handleNext
+              handleNext: this.handleNext,
+              handlePrevious: this.handlePrevious,
+              handleLoop: this.handleLoop
             }}
           />
         </div>

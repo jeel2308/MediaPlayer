@@ -9,6 +9,7 @@ class Progress extends React.PureComponent {
     thumbnailCurrentTime: 0
   };
   ref = React.createRef();
+
   setDuration = e => {
     const left = e.target.getBoundingClientRect().left;
     let width = 0;

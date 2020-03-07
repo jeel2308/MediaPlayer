@@ -5,7 +5,10 @@ import "../css/buttons.css";
 class SkipBtn extends React.PureComponent {
   render() {
     return (
-      <div onClick={this.props.type ? this.props[this.props.type] : () => {}}>
+      <div
+        onClick={this.props.type ? this.props[this.props.type] : () => {}}
+        className="wrapper"
+      >
         <IconContext.Provider value={{ className: this.props.classValue }}>
           {this.props.children}
         </IconContext.Provider>
