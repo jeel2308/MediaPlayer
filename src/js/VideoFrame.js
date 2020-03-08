@@ -7,7 +7,7 @@ import Controls from "./Controls";
 // import Video from "./Video";
 // import * as url2 from "C:\\Users\\vatsal\\Desktop\\project2\\src\\try.mkv";
 // console.log(url);
-import * as url from "../../src/try.mkv";
+// import * as url from "../../src/try.mkv";
 class VideoFrame extends React.PureComponent {
   state = {
     width: `100%`,
@@ -17,7 +17,7 @@ class VideoFrame extends React.PureComponent {
     ) - 26.4}px`,
     currentTime: 0,
     duration: 0,
-    state: "play",
+    state: "",
     fullScreen: "false",
     muted: false,
     volume: 1,
@@ -231,7 +231,7 @@ class VideoFrame extends React.PureComponent {
   setVideoState = e => {
     const duration = e.target.duration;
     this.setState(() => ({
-      state: "canPlay",
+      state: "play",
       duration
     }));
   };
