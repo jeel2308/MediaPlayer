@@ -261,6 +261,9 @@ class Controls extends React.PureComponent {
                 handlePlayPause={this.props.handlers.handlePlayPause}
                 size="small"
                 classValue={"play hover"}
+                value={
+                  (this.props.data.currentTime / this.props.data.duration) * 100
+                }
               />
               <ShuffleOrLoop
                 handleLoop={this.props.handlers.handleLoop}

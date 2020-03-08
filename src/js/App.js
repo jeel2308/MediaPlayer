@@ -19,7 +19,7 @@ import "../css/index.css";
 
 class App extends React.Component {
   state = {
-    url: "C:\\Users\\vatsal\\Desktop\\project2\\src\\try.mkv"
+    url: ""
   };
   updateUrl = url => {
     this.setState(() => ({
