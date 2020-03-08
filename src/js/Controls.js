@@ -9,7 +9,10 @@ import {
   MdForward5,
   MdReplay5,
   MdSkipNext,
-  MdSkipPrevious
+  MdSkipPrevious,
+  MdVolumeUp,
+  MdVolumeDown,
+  MdVolumeOff
 } from "react-icons/md";
 import ShuffleOrLoop from "./ShuffleOrLoop";
 import { IconContext } from "react-icons";
@@ -18,49 +21,49 @@ import SkipBtn from "./SkipBtn";
 import FullScreen from "./FullScreen.js";
 
 class Controls extends React.PureComponent {
-  state = {
-    replayClass: "BigBtn",
-    forwardClass: "BigBtn"
-  };
+  // state = {
+  //   replayClass: "BigBtn",
+  //   forwardClass: "BigBtn"
+  // };
   handleReplay = () => {
     // console.log("handleReplay");
     this.props.handlers.handleReplay();
-    const index = this.state.replayClass.indexOf("animate2");
+    // const index = this.state.replayClass.indexOf("animate2");
     // console.log(index);
     // console.log(index);
-    if (index === -1) {
-      this.setState(() => ({
-        replayClass: "BigBtn animate2"
-      }));
-    } else {
-      this.setState(() => ({
-        replayClass: "BigBtn animate"
-      }));
-    }
+    // if (index === -1) {
+    //   this.setState(() => ({
+    //     replayClass: "BigBtn animate2"
+    //   }));
+    // } else {
+    //   this.setState(() => ({
+    //     replayClass: "BigBtn animate"
+    //   }));
+    // }
   };
   handleForward = () => {
     this.props.handlers.handleForward();
-    const index = this.state.forwardClass.indexOf("animate2");
+    // const index = this.state.forwardClass.indexOf("animate2");
     // console.log(index);
-    if (index === -1) {
-      this.setState(() => ({
-        forwardClass: "BigBtn animate2"
-      }));
-    } else {
-      this.setState(() => ({
-        forwardClass: "BigBtn animate"
-      }));
-    }
+    // if (index === -1) {
+    //   this.setState(() => ({
+    //     forwardClass: "BigBtn animate2"
+    //   }));
+    // } else {
+    //   this.setState(() => ({
+    //     forwardClass: "BigBtn animate"
+    //   }));
+    // }
   };
   render() {
     return (
       <>
-        <div id="largeBtns">
-          {/*<div>
+        {/*<div id="largeBtns">
+          <div>
             <IconContext.Provider value={{ className: this.state.replayClass }}>
               <MdReplay5 />
             </IconContext.Provider>
-    </div>*/}
+    </div>
           <div
             style={{
               opacity:
@@ -70,13 +73,11 @@ class Controls extends React.PureComponent {
                   : 0
             }}
           >
-            (
             <PlayBtn
               state={this.props.data.state}
               size="large"
               classValue={"playBigBtn animate"}
             />
-            )
           </div>
           {/* <div>
             <IconContext.Provider
@@ -84,8 +85,145 @@ class Controls extends React.PureComponent {
             >
               <MdForward5 />
             </IconContext.Provider>
-         </div>*/}
+         </div>
+        </div>*/}
+        <div id="largeBtns">
+          {(largeBtn => {
+            switch (largeBtn) {
+              case "pause":
+              case "play": {
+                return (
+                  <div
+                    style={{
+                      opacity:
+                        this.props.data.state !== "end" &&
+                        this.props.data.state !== "canPlay"
+                          ? 1
+                          : 0
+                    }}
+                  >
+                    <PlayBtn
+                      state={this.props.data.state}
+                      size="large"
+                      classValue={"playBigBtn animate"}
+                    />
+                  </div>
+                );
+              }
+              case "forward1": {
+                return (
+                  <div>
+                    <IconContext.Provider
+                      value={{ className: "BigBtn animate" }}
+                    >
+                      <MdForward5 />
+                    </IconContext.Provider>
+                  </div>
+                );
+              }
+              case "forward2": {
+                return (
+                  <div>
+                    <IconContext.Provider
+                      value={{ className: "BigBtn animate2" }}
+                    >
+                      <MdForward5 />
+                    </IconContext.Provider>
+                  </div>
+                );
+              }
+              case "replay1": {
+                return (
+                  <div>
+                    <IconContext.Provider
+                      value={{ className: "BigBtn animate" }}
+                    >
+                      <MdReplay5 />
+                    </IconContext.Provider>
+                  </div>
+                );
+              }
+              case "replay2": {
+                return (
+                  <div>
+                    <IconContext.Provider
+                      value={{ className: "BigBtn animate2" }}
+                    >
+                      <MdReplay5 />
+                    </IconContext.Provider>
+                  </div>
+                );
+              }
+              case "volumeUp1": {
+                return (
+                  <div>
+                    <IconContext.Provider
+                      value={{ className: "BigBtn animate" }}
+                    >
+                      <MdVolumeUp />
+                    </IconContext.Provider>
+                  </div>
+                );
+              }
+              case "volumeUp2": {
+                return (
+                  <div>
+                    <IconContext.Provider
+                      value={{ className: "BigBtn animate2" }}
+                    >
+                      <MdVolumeUp />
+                    </IconContext.Provider>
+                  </div>
+                );
+              }
+              case "volumeDown1": {
+                return (
+                  <div>
+                    <IconContext.Provider
+                      value={{ className: "BigBtn animate" }}
+                    >
+                      <MdVolumeDown />
+                    </IconContext.Provider>
+                  </div>
+                );
+              }
+              case "volumeDown2": {
+                return (
+                  <div>
+                    <IconContext.Provider
+                      value={{ className: "BigBtn animate2" }}
+                    >
+                      <MdVolumeDown />
+                    </IconContext.Provider>
+                  </div>
+                );
+              }
+              case "mute": {
+                return (
+                  <div>
+                    <IconContext.Provider
+                      value={{ className: "BigBtn animate" }}
+                    >
+                      <MdVolumeOff />
+                    </IconContext.Provider>
+                  </div>
+                );
+              }
+              case "unMute": {
+                return (
+                  <div>
+                    <IconContext.Provider
+                      value={{ className: "BigBtn animate" }}
+                    >
+                      <MdVolumeUp />
+                    </IconContext.Provider>
+                  </div>
+                );
+              }
+            }
+          })(this.props.data.largeBtn)}
         </div>
+
         <div id="controls">
           <div id="controls__first">
             <Progress

@@ -21,7 +21,8 @@ class VideoFrame extends React.PureComponent {
     fullScreen: "false",
     muted: false,
     volume: 1,
-    loop: false
+    loop: false,
+    largeBtn: ""
   };
   video = React.createRef();
   componentDidMount() {
@@ -37,12 +38,14 @@ class VideoFrame extends React.PureComponent {
     if (this.video.current.paused || this.video.current.ended) {
       this.video.current.play();
       this.setState(() => ({
-        state: "play"
+        state: "play",
+        largeBtn: "play"
       }));
     } else {
       this.video.current.pause();
       this.setState(() => ({
-        state: "pause"
+        state: "pause",
+        largeBtn: "pause"
       }));
     }
   };
@@ -63,11 +66,15 @@ class VideoFrame extends React.PureComponent {
     if (this.video.current.currentTime + 5 < this.video.current.duration) {
       this.video.current.currentTime += 5;
       this.setState(prevState => ({
-        currentTime: prevState.currentTime + 5
+        currentTime: prevState.currentTime + 5,
+        largeBtn: prevState.largeBtn === "forward1" ? "forward2" : "forward1"
       }));
     } else {
       this.video.current.currentTime = this.video.current.duration;
-      this.setState(() => ({ currentTime: this.video.current.duration }));
+      this.setState(prevState => ({
+        currentTime: this.video.current.duration,
+        largeBtn: prevState.largeBtn === "forward1" ? "forward2" : "forward1"
+      }));
     }
   };
   handleKey = e => {
@@ -133,10 +140,11 @@ class VideoFrame extends React.PureComponent {
     }
   };
   handleVolume = volume => {
-    if (volume + this.video.current.volume >= 1) {
+    if (volume + this.video.current.volume > 1) {
       this.video.current.volume = 1;
-      this.setState(() => ({
-        volume: 1
+      this.setState(prevState => ({
+        volume: 1,
+        largeBtn: prevState.largeBtn === "volumeUp1" ? "volumeUp2" : "volumeUp1"
       }));
     } else if (volume + this.video.current.volume < 0) {
       this.video.current.volume = 0;
@@ -147,7 +155,15 @@ class VideoFrame extends React.PureComponent {
       this.video.current.volume += volume;
       console.log(this.video.current.volume);
       this.setState(prevState => ({
-        volume: prevState.volume + volume
+        volume: prevState.volume + volume,
+        largeBtn:
+          volume > 0
+            ? prevState.largeBtn === "volumeUp1"
+              ? "volumeUp2"
+              : "volumeUp1"
+            : prevState.largeBtn === "volumeDown1"
+            ? "volumeDown2"
+            : "volumeDown1"
       }));
     }
   };
@@ -160,19 +176,22 @@ class VideoFrame extends React.PureComponent {
   handleMute = () => {
     this.video.current.muted = !this.video.current.muted;
     this.setState(prevState => ({
-      muted: !prevState.muted
+      muted: !prevState.muted,
+      largeBtn: prevState.muted ? "unMute" : "mute"
     }));
   };
   handleReplay = () => {
     if (this.video.current.currentTime - 5 >= 0) {
       this.video.current.currentTime -= 5;
       this.setState(prevState => ({
-        currentTime: prevState.currentTime - 5
+        currentTime: prevState.currentTime - 5,
+        largeBtn: prevState.largeBtn === "replay1" ? "replay2" : "replay1"
       }));
     } else {
       this.video.current.currentTime = 0;
-      this.setState(() => ({
-        currentTime: 0
+      this.setState(prevState => ({
+        currentTime: 0,
+        largeBtn: prevState.largeBtn === "replay1" ? "replay2" : "replay1"
       }));
     }
   };
@@ -269,7 +288,8 @@ class VideoFrame extends React.PureComponent {
               state: this.state.state,
               muted: this.state.muted,
               url: this.props.url,
-              loop: this.state.loop
+              loop: this.state.loop,
+              largeBtn: this.state.largeBtn
             }}
             handlers={{
               handleCurrentTime: this.handleCurrentTime,

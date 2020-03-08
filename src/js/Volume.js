@@ -3,6 +3,9 @@ import { IconContext } from "react-icons";
 import { MdVolumeUp, MdVolumeOff } from "react-icons/md";
 import "../css/volume.css";
 class Volume extends React.PureComponent {
+  state = {
+    display: "none"
+  };
   volume = React.createRef();
   handleVideoVolume = e => {
     const position = e.pageX;
@@ -53,7 +56,11 @@ class Volume extends React.PureComponent {
               {this.props.muted ? <MdVolumeOff /> : <MdVolumeUp />}
             </IconContext.Provider>
           </div>
-          <div id="volumeBarContainer" onClick={this.handleVideoVolume}>
+          <div
+            id="volumeBarContainer"
+            onClick={this.handleVideoVolume}
+            title={this.props.volume}
+          >
             <div id="volumeBar">
               <div
                 id="videoVolume"
