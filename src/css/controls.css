@@ -1,3 +1,33 @@
+.animate {
+  animation-name: anime;
+  animation-duration: 0.85s;
+  animation-fill-mode: forwards;
+}
+.animate2 {
+  animation-name: anime2;
+  animation-duration: 0.85s;
+  animation-fill-mode: forwards;
+}
+@keyframes anime {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+@keyframes anime2 {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
 #controls {
   display: flex;
   z-index: 1;
@@ -21,4 +51,22 @@
   margin-right: auto;
   display: flex;
   align-items: center;
+}
+#largeBtns {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-evenly;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+.BigBtn {
+  color: white;
+  background-color: black;
+  font-size: 100px;
+  border-radius: 50%;
+  opacity: 0;
 }
