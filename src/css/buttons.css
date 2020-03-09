@@ -6,6 +6,10 @@
   animation-duration: 0.85s;
   animation-fill-mode: forwards;
 }
+.CircularProgressbar {
+  width: 50px;
+  vertical-align: middle;
+}
 @keyframes anime {
   from {
     transform: scale(1);
@@ -17,8 +21,14 @@
   }
 }
 .play {
-  font-size: 50px;
+  font-size: 35px;
+  text-align: center;
   color: white;
+  /* border-radius: 50%; */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 .playBigBtn {
   color: white;
@@ -33,7 +43,8 @@
 .hover:hover {
   cursor: pointer;
 }
-.skipbtn {
+.skipbtn,
+.loop {
   font-size: 35px;
 }
 
