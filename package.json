@@ -8,11 +8,12 @@
     "cross-env": "6.0.2",
     "electron-is-dev": "1.1.0",
     "electron-log": "^3.0.8",
-    "font-awesome": "^4.7.0",
-    "jquery": "^3.4.1",
+    "electron-react-devtools": "^0.5.3",
     "react": "^16.8.6",
+    "react-circular-progressbar": "^2.0.3",
     "react-dom": "^16.8.6",
     "react-icons": "^3.9.0",
+    "react-tooltip": "^4.1.0",
     "update-electron-app": "^1.2.0"
   },
   "devDependencies": {
