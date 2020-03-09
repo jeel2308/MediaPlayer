@@ -27,7 +27,7 @@
 }
 
 #navbar {
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: darkslateblue;
   color: white;
   display: flex;
   flex-direction: row;
@@ -40,7 +40,7 @@
   list-style-type: none;
 }
 .navbar_li {
-  margin: 4px 5px;
+  padding: 4px 5px;
 }
 .navbar_li:hover {
   cursor: pointer;
