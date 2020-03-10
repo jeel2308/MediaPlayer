@@ -13,7 +13,7 @@ class NavBar extends Component {
     let subtitle = "";
     if (window.subtitleList) {
       subtitle = window.subtitleList[window.videoIndex];
-      console.log(subtitle, window.videoIndex);
+      // console.log(subtitle, window.videoIndex);
     }
     this.props.updateUrl(url);
     this.props.updateSubtitleUrl(subtitle);
@@ -21,12 +21,10 @@ class NavBar extends Component {
   handleFolder = async () => {
     let url = await window.openDirectory();
     if (url !== "not selected") {
-      url =
-        window.directory.replace(/\s/g, "%20").replace(/\\/g, "\\") +
-        "\\" +
-        window.directoryEntry[0].replace(/\s/g, "%20").replace(/\\/g, "\\");
+      url = window.directory + "\\" + window.directoryEntry[0];
       this.props.updateUrl(url);
     }
+    this.props.updateSubtitleUrl("");
   };
   handleMinimize = () => {
     if (window.handleMinimize) window.handleMinimize();

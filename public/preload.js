@@ -30,6 +30,7 @@ window.openFile = async () => {
     window.videoIndex = -1;
     window.directory = folder;
     window.directoryEntry = [];
+    window.subtitleList = [];
     handleDirectorySubtitles(folder, file);
     // const p = new Promise((resolve, reject) => {
     //   fs.stat(subtitleUrl, (err, stats) => {
@@ -57,7 +58,7 @@ window.openDirectory = async () => {
     throw new Error(e);
   }
   if (!obj.canceled) {
-    window.directoryEntry = await handleDirectory(obj.filePaths[0]);
+    window.directoryEntry = await handleDirectorySubtitles(obj.filePaths[0]);
     window.directory = obj.filePaths[0];
     window.videoIndex = 0;
     return obj.filePaths[0];
@@ -98,7 +99,7 @@ const handleDirectorySubtitles = (folder, file) => {
 
     .then(folderList => {
       window.directoryEntry = folderList;
-      window.videoIndex = window.directoryEntry.indexOf(file);
+      if (file) window.videoIndex = window.directoryEntry.indexOf(file);
       const promiseArray = [];
       for (let i = 0; i < folderList.length; i++) {
         const p = new Promise((resolve, reject) => {
@@ -132,6 +133,7 @@ const handleDirectorySubtitles = (folder, file) => {
         window.subtitleList = list;
       });
     });
+  if (!file) return list;
 };
 const handleDirectory = async folder => {};
 
