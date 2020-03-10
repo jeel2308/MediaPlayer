@@ -10,7 +10,13 @@ class NavBar extends Component {
   handleFile = async () => {
     let url = await window.openFile();
     if (url === "Not selected") return;
+    let subtitle = "";
+    if (window.subtitleList) {
+      subtitle = window.subtitleList[window.videoIndex];
+      console.log(subtitle, window.videoIndex);
+    }
     this.props.updateUrl(url);
+    this.props.updateSubtitleUrl(subtitle);
   };
   handleFolder = async () => {
     let url = await window.openDirectory();

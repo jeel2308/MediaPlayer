@@ -1,3 +1,15 @@
+.border {
+  width: 30px;
+  border-radius: 4px;
+  margin: 0px auto 0 auto;
+  height: 5px;
+  background-color: white;
+}
+
+div[data-test-id="CircularProgressbarWithChildren"] {
+  margin: 0 10px;
+}
+
 .fontSize {
   font-size: 20px;
 }
@@ -43,6 +55,11 @@
 .hover:hover {
   cursor: pointer;
 }
+.subtitles {
+  font-size: 35px;
+  display: flex;
+  flex-direction: column;
+}
 .skipbtn,
 .loop {
   font-size: 35px;
@@ -50,5 +67,5 @@
 
 .wrapper,
 .volumeContainer {
-  margin: 0 20px;
+  margin: 0 10px;
 }

@@ -25,7 +25,7 @@ const PlayBtn = props => {
         </div>
       )}
       {props.size === "small" && (
-        <CircularProgressbarWithChildren value={props.value || 100}>
+        <CircularProgressbarWithChildren value={props.value || 0}>
           <div onClick={props.handlePlayPause} className="wrapper">
             <IconContext.Provider value={{ className: props.classValue }}>
               {props.state === "play" || props.state === "canPlay" ? (

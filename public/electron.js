@@ -49,9 +49,21 @@ ipcMain.handle("openFile", async () => {
       filters: [
         {
           name: "all",
-          extensions: ["mp4"]
+          extensions: ["3gp", "swi", "m4v", "mp4", "mkv", "avi", "svi", "ogg"]
         }
       ]
+    });
+  } catch (e) {
+    throw new Error(e);
+  }
+  return obj;
+});
+
+ipcMain.handle("openFolder", async () => {
+  let obj = "";
+  try {
+    obj = await dialog.showOpenDialog(mainWindow, {
+      properties: ["openDirectory"]
     });
   } catch (e) {
     throw new Error(e);

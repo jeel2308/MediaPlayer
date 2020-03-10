@@ -4,6 +4,7 @@ import "../css/controls.css";
 import Progress from "./Progress";
 import Volume from "./Volume";
 import Time from "./Time";
+import Subtitles from "./Subtitles";
 // import SkipBtn from "./SkipBtn";
 import {
   MdForward5,
@@ -26,7 +27,6 @@ class Controls extends React.PureComponent {
   //   forwardClass: "BigBtn"
   // };
   handleReplay = () => {
-    // console.log("handleReplay");
     this.props.handlers.handleReplay();
     // const index = this.state.replayClass.indexOf("animate2");
     // console.log(index);
@@ -265,10 +265,6 @@ class Controls extends React.PureComponent {
                   (this.props.data.currentTime / this.props.data.duration) * 100
                 }
               />
-              <ShuffleOrLoop
-                handleLoop={this.props.handlers.handleLoop}
-                loop={this.props.data.loop}
-              />
               <SkipBtn
                 handleForward={this.props.handlers.handleForward}
                 type="handleForward"
@@ -276,6 +272,15 @@ class Controls extends React.PureComponent {
               >
                 <MdForward5 />
               </SkipBtn>
+              <ShuffleOrLoop
+                handleLoop={this.props.handlers.handleLoop}
+                loop={this.props.data.loop}
+              />
+              <Subtitles
+                subtitlesBtn={this.props.data.subtitlesBtn}
+                subtitlesBtnState={this.props.data.subtitlesBtnState}
+                handleSubtitles={this.props.handlers.handleSubtitleState}
+              />
               <SkipBtn
                 handleNext={this.props.handlers.handleNext}
                 type="handleNext"

@@ -19,18 +19,33 @@ import "../css/index.css";
 
 class App extends React.Component {
   state = {
-    url: ""
+    url: "",
+    subtitleUrl: ""
   };
   updateUrl = url => {
     this.setState(() => ({
       url
     }));
   };
+  updateSubtitleUrl = subtitleUrl => {
+    this.setState(() => ({
+      subtitleUrl
+    }));
+  };
+
   render() {
     return (
       <div id="video-player">
-        <NavBar updateUrl={this.updateUrl} />
-        <VideoFrame url={this.state.url} updateUrl={this.updateUrl} />
+        <NavBar
+          updateUrl={this.updateUrl}
+          updateSubtitleUrl={this.updateSubtitleUrl}
+        />
+        <VideoFrame
+          url={this.state.url}
+          subtitleUrl={this.state.subtitleUrl}
+          updateUrl={this.updateUrl}
+          updateSubtitleUrl={this.updateSubtitleUrl}
+        />
       </div>
     );
   }

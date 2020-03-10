@@ -11,10 +11,7 @@ import Controls from "./Controls";
 class VideoFrame extends React.PureComponent {
   state = {
     width: `100%`,
-    height: `${Math.max(
-      document.documentElement.clientHeight,
-      window.innerHeight || 0
-    ) - 26.4}px`,
+    height: `${Math.max(document.documentElement.clientHeight) - 26.4}px`,
     currentTime: 0,
     duration: 0,
     state: "",
@@ -22,11 +19,25 @@ class VideoFrame extends React.PureComponent {
     muted: false,
     volume: 1,
     loop: false,
-    largeBtn: ""
+    largeBtn: "",
+    subtitlesBtn: "none",
+    subtitlesBtnState: "none",
+    text: ""
   };
   video = React.createRef();
+  subtitle = React.createRef();
   componentDidMount() {
     window.addEventListener("resize", this.handleResize);
+    this.subtitle.current.addEventListener("cuechange", e => {
+      let text = "";
+
+      if (e.target.track.activeCues[0]) {
+        text = e.target.track.activeCues[0].text;
+      }
+      this.setState(() => ({
+        text
+      }));
+    });
   }
   handleCurrentTime = currentTime => {
     this.video.current.currentTime = currentTime;
@@ -124,7 +135,9 @@ class VideoFrame extends React.PureComponent {
           .replace(/\s/g, "%20")
           .replace(/\\/g, "\\");
       // console.log(url);
+      let subtitleUrl = window.subtitleList[window.videoIndex];
       this.props.updateUrl(url);
+      this.props.updateSubtitleUrl(subtitleUrl);
     }
   };
   handlePrevious = () => {
@@ -136,7 +149,9 @@ class VideoFrame extends React.PureComponent {
         window.directoryEntry[window.videoIndex]
           .replace(/\s/g, "%20")
           .replace(/\\/g, "\\");
+      let subtitleUrl = window.subtitleList[window.videoIndex];
       this.props.updateUrl(url);
+      this.props.updateSubtitleUrl(subtitleUrl);
     }
   };
   handleVolume = volume => {
@@ -232,8 +247,37 @@ class VideoFrame extends React.PureComponent {
     const duration = e.target.duration;
     this.setState(() => ({
       state: "play",
-      duration
+      duration,
+      subtitlesBtn: !this.props.subtitleUrl ? "none" : "flex",
+      subtitlesBtnState: "none"
     }));
+    setTimeout(() => {
+      if (this.state.subtitlesBtn === "flex") return;
+      const subtitleUrl = window.subtitleList[window.videoIndex];
+      if (subtitleUrl === "") return;
+      else {
+        this.props.updateSubtitleUrl(subtitleUrl);
+        this.setState(() => ({
+          subtitlesBtn: "flex"
+        }));
+      }
+    }, 5000);
+    // this.video.current.textTracks[0].mode = "hidden";
+    // console.log(this.video.current.textTracks[0].cues);
+  };
+  setSubtitleState = () => {
+    if (this.video.current.textTracks[0].mode === "disabled") {
+      this.video.current.textTracks[0].mode = "hidden";
+      this.setState(() => ({
+        subtitlesBtnState: "block"
+      }));
+    } else {
+      this.video.current.textTracks[0].mode = "disabled";
+      this.setState(() => ({
+        subtitlesBtnState: "none",
+        text: ""
+      }));
+    }
   };
   render() {
     return (
@@ -272,14 +316,16 @@ class VideoFrame extends React.PureComponent {
             ref={this.video}
           >
             <track
-              label="English"
               kind="subtitles"
-              srcLang="en"
-              src=""
+              src={this.props.subtitleUrl}
+              ref={this.subtitle}
               id="cue"
+              srcLang="en"
+              label="English"
             />
             Video tag is not supported.
           </video>
+          <div id="subtitleDisplay">{this.state.text}</div>
           <Controls
             data={{
               duration: this.state.duration,
@@ -289,7 +335,9 @@ class VideoFrame extends React.PureComponent {
               muted: this.state.muted,
               url: this.props.url,
               loop: this.state.loop,
-              largeBtn: this.state.largeBtn
+              largeBtn: this.state.largeBtn,
+              subtitlesBtn: this.state.subtitlesBtn,
+              subtitlesBtnState: this.state.subtitlesBtnState
             }}
             handlers={{
               handleCurrentTime: this.handleCurrentTime,
@@ -301,7 +349,8 @@ class VideoFrame extends React.PureComponent {
               handleMute: this.handleMute,
               handleNext: this.handleNext,
               handlePrevious: this.handlePrevious,
-              handleLoop: this.handleLoop
+              handleLoop: this.handleLoop,
+              handleSubtitleState: this.setSubtitleState
             }}
           />
         </div>
