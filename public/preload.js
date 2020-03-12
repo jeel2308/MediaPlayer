@@ -180,3 +180,35 @@ const srtToVtt = srtfile => {
 //   fs.appendFileSync(vttfile, "\r\n");
 //   return vttfile;
 // }
+
+window.handleDrop = async (url, type) => {
+  const p = new Promise((resolve, reject) => {
+    fs.stat(url, async (err, stats) => {
+      if (err) resolve("");
+      else {
+        if (type.match(/video\//)) {
+          const index = url.lastIndexOf("\\");
+          const folder = url.substr(0, index);
+          const file = url.substr(index + 1, url.length);
+          if (folder === window.directory) {
+            window.videoIndex = window.directoryEntry.indexOf(file);
+            resolve("");
+          }
+          window.videoIndex = -1;
+          window.directory = folder;
+          window.directoryEntry = [];
+          window.subtitleList = [];
+          handleDirectorySubtitles(folder, file);
+          resolve("");
+        } else if (stats.isDirectory()) {
+          console.log("it is a directory");
+          window.directoryEntry = await handleDirectorySubtitles(url);
+          window.directory = url;
+          window.videoIndex = 0;
+          resolve(url);
+        }
+      }
+    });
+  });
+  return p;
+};

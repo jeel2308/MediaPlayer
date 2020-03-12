@@ -54,6 +54,10 @@
   /* height: 100%; */
   object-fit: contain;
 }
+video::cue {
+  background-image: linear-gradient(to bottom, dimgray, lightgray);
+  color: papayawhip;
+}
 #subtitleDisplay {
   position: absolute;
   background-color: black;
