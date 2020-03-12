@@ -31,8 +31,7 @@ window.openFile = async () => {
     window.directory = folder;
     window.directoryEntry = [];
     window.subtitleList = [];
-    const event = new Event("folderNotReady");
-    window.dispatchEvent(event);
+
     handleDirectorySubtitles(folder, file);
 
     return url.replace(/\s/g, "%20");

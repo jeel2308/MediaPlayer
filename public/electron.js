@@ -20,7 +20,6 @@ function createWindow() {
       preload: path.join(__dirname, "preload.js")
     }
   });
-  mainWindow.webContents.toggleDevTools();
   mainWindow.loadURL(
     isDev
       ? "http://localhost:3000"
