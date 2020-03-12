@@ -31,20 +31,9 @@ window.openFile = async () => {
     window.directory = folder;
     window.directoryEntry = [];
     window.subtitleList = [];
+    const event = new Event("folderNotReady");
+    window.dispatchEvent(event);
     handleDirectorySubtitles(folder, file);
-    // const p = new Promise((resolve, reject) => {
-    //   fs.stat(subtitleUrl, (err, stats) => {
-    //     if (err) reject("File Not Found");
-    //     else resolve(subtitleUrl);
-    //   });
-    // });
-
-    // try {
-    //   subtitleUrl = await p;
-    //   window.subtitle = subtitleUrl.replace(/\s/g, "%20");
-    // } catch (e) {
-    //   window.subtitle = "";
-    // }
 
     return url.replace(/\s/g, "%20");
   } else return "Not selected";
@@ -61,8 +50,9 @@ window.openDirectory = async () => {
     window.directoryEntry = await handleDirectorySubtitles(obj.filePaths[0]);
     window.directory = obj.filePaths[0];
     window.videoIndex = 0;
-    return obj.filePaths[0];
-  } else return "not selected";
+    const event = new Event("readyToPlay");
+    window.dispatchEvent(event);
+  }
 };
 
 const handleDirectorySubtitles = (folder, file) => {
@@ -217,35 +207,3 @@ window.handleDrop = (url, type) => {
     }
   });
 };
-
-// window.handleDrop = async (url, type) => {
-//   const p = new Promise((resolve, reject) => {
-//     fs.stat(url, async (err, stats) => {
-//       if (err) reject("");
-//       else {
-//         if (type.match(/video\//)) {
-//           const index = url.lastIndexOf("\\");
-//           const folder = url.substr(0, index);
-//           const file = url.substr(index + 1, url.length);
-//           if (folder === window.directory) {
-//             window.videoIndex = window.directoryEntry.indexOf(file);
-//             resolve("");
-//           }
-//           window.videoIndex = -1;
-//           window.directory = folder;
-//           window.directoryEntry = [];
-//           window.subtitleList = [];
-//           handleDirectorySubtitles(folder, file);
-//           resolve("");
-//         } else if (stats.isDirectory()) {
-//           console.log("it is a directory");
-//           window.directoryEntry = await handleDirectorySubtitles(url);
-//           window.directory = url;
-//           window.videoIndex = 0;
-//           resolve(url);
-//         }
-//       }
-//     });
-//   });
-//   return p;
-// };

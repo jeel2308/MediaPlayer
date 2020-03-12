@@ -22,10 +22,6 @@ import SkipBtn from "./SkipBtn";
 import FullScreen from "./FullScreen.js";
 
 class Controls extends React.PureComponent {
-  // state = {
-  //   replayClass: "BigBtn",
-  //   forwardClass: "BigBtn"
-  // };
   handleReplay = () => {
     this.props.handlers.handleReplay();
     // const index = this.state.replayClass.indexOf("animate2");

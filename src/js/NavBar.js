@@ -18,13 +18,8 @@ class NavBar extends Component {
     this.props.updateUrl(url);
     this.props.updateSubtitleUrl(subtitle);
   };
-  handleFolder = async () => {
-    let url = await window.openDirectory();
-    if (url !== "not selected") {
-      url = window.directory + "\\" + window.directoryEntry[0];
-      this.props.updateUrl(url);
-    }
-    this.props.updateSubtitleUrl("");
+  handleFolder = () => {
+    window.openDirectory();
   };
   handleMinimize = () => {
     if (window.handleMinimize) window.handleMinimize();
