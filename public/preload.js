@@ -135,51 +135,61 @@ const handleDirectorySubtitles = (folder, file) => {
     });
   if (!file) return list;
 };
-const handleDirectory = async folder => {};
 
 const srtToVtt = srtfile => {
-  let vttfile = srtfile.replace(/\.srt/, ".vtt");
-  const p = new Promise((resolve, reject) => {
+  const vttfile = srtfile.replace(/\.srt/, ".vtt");
+  const fileStart = new Promise((resolve, reject) => {
     fs.writeFile(vttfile, "WEBVTT\n", err => {
-      if (err) resolve("");
+      if (err) reject("");
       else {
-        new Promise((resolve, reject) => {
-          fs.readFile(srtfile, (err, data) => {
-            if (err) resolve("");
-            else {
-              data = data.toString().split("");
-              let start = 0;
-              while (data.indexOf(">", start + 1) >= 0) {
-                let index = data.indexOf(">", start + 1);
-                data[index - 7] = ".";
-                data[index + 10] = ".";
-                start = index;
-              }
-              data = data.join("");
-              fs.appendFile(vttfile, data, err => {
-                if (err) console.log(err);
-              });
-              fs.appendFile(vttfile, "\r\n", err => {
-                if (err) console.log(err);
-              });
-              resolve(vttfile);
-            }
-          });
-        }).then(resolve);
+        resolve(vttfile);
       }
     });
   });
-  return p;
+
+  const readFile = new Promise((resolve, reject) => {
+    fs.readFile(srtfile, (err, data) => {
+      if (err) reject("");
+      else {
+        resolve(data.toString());
+      }
+    });
+  });
+
+  return Promise.all([fileStart, readFile])
+    .then(data => {
+      data[1] = data[1].split("");
+      let start = 0;
+      while (data[1].indexOf(">", start + 1) >= 0) {
+        let index = data[1].indexOf(">", start + 1);
+        data[1][index - 7] = ".";
+        data[1][index + 10] = ".";
+        start = index;
+      }
+      return [data[0], data[1].join("")];
+    })
+    .then(
+      data =>
+        new Promise((resolve, reject) => {
+          fs.appendFile(data[0], data[1], err => {
+            if (err) reject("");
+            else resolve(data[0]);
+          });
+        })
+    )
+    .then(
+      vttfile =>
+        new Promise((resolve, reject) => {
+          fs.appendFile(vttfile, "\r\n", err => {
+            if (err) reject("");
+            else resolve(vttfile);
+          });
+        })
+    )
+    .catch(val => {
+      return val;
+    });
 };
-
-//   });
-//   let text = fs.readFileSync(srtfile, { encoding: "utf8" });
-//   text = text.split("");
-
-//   fs.appendFileSync(vttfile, text);
-//   fs.appendFileSync(vttfile, "\r\n");
-//   return vttfile;
-// }
 
 window.handleDrop = async (url, type) => {
   const p = new Promise((resolve, reject) => {
