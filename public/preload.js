@@ -79,6 +79,7 @@ const handleDirectorySubtitles = (folder, file) => {
       );
     });
   });
+
   list
     .then(list => {
       return list;
@@ -92,30 +93,27 @@ const handleDirectorySubtitles = (folder, file) => {
       if (file) window.videoIndex = window.directoryEntry.indexOf(file);
       const promiseArray = [];
       for (let i = 0; i < folderList.length; i++) {
+        const file = folder + "/" + folderList[i];
+        const index = file.lastIndexOf(".");
+        const file1 = file.substr(0, index) + ".vtt";
         const p = new Promise((resolve, reject) => {
-          const file = folder + "/" + folderList[i];
-          const index = file.lastIndexOf(".");
-          const file1 = file.substr(0, index) + ".vtt";
-
-          new Promise((resolve, reject) => {
-            fs.stat(file1, (err, stats) => {
-              if (!err) {
-                resolve(file1);
-              } else {
-                const file2 = file.substr(0, index) + ".srt";
-                new Promise((resolve, reject) => {
-                  fs.stat(file2, (err, stats) => {
-                    if (err) {
-                      resolve("");
-                    } else {
-                      const p = srtToVtt(file2);
-                      p.then(resolve);
-                    }
-                  });
-                }).then(resolve);
-              }
-            });
-          }).then(resolve);
+          fs.stat(file1, (err, stats) => {
+            if (!err) {
+              resolve(file1);
+            } else {
+              const file2 = file.substr(0, index) + ".srt";
+              new Promise((resolve, reject) => {
+                fs.stat(file2, (err, stats) => {
+                  if (err) {
+                    resolve("");
+                  } else {
+                    const p = srtToVtt(file2);
+                    p.then(resolve);
+                  }
+                });
+              }).then(resolve);
+            }
+          });
         });
         promiseArray.push(p);
       }
