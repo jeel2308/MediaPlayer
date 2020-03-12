@@ -28,9 +28,12 @@ class VideoFrame extends React.PureComponent {
   subtitle = React.createRef();
   componentDidMount() {
     window.addEventListener("resize", this.handleResize);
+    window.addEventListener("readyToPlay", event => {
+      this.props.updateUrl(window.directory + "/" + window.directoryEntry[0]);
+      this.props.updateSubtitleUrl("");
+    });
     this.subtitle.current.addEventListener("cuechange", e => {
       let text = "";
-
       if (e.target.track.activeCues[0]) {
         text = e.target.track.activeCues[0].text;
       }
@@ -280,17 +283,12 @@ class VideoFrame extends React.PureComponent {
     }
   };
   handleDrop = async e => {
-    console.log("working");
     e.preventDefault();
     const file = e.dataTransfer.files[0].path;
     const type = e.dataTransfer.files[0].type;
-    const p = window.handleDrop(file, type);
+    window.handleDrop(file, type);
     if (type.match(/video\//)) {
       this.props.updateUrl(file);
-      this.props.updateSubtitleUrl("");
-    } else if (p) {
-      const folder = await p;
-      this.props.updateUrl(folder + "/" + window.directoryEntry[0]);
       this.props.updateSubtitleUrl("");
     }
   };
