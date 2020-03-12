@@ -1,7 +1,5 @@
 import React, { Component } from "react";
 import "../css/navbar.css";
-// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-// import { faWindowClose } from "@fortawesome/fontawesome-svg-core";
 import { IoIosClose } from "react-icons/io";
 import { IconContext } from "react-icons";
 // import "../css/font-awesome.min.css";

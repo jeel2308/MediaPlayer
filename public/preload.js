@@ -34,7 +34,7 @@ window.openFile = async () => {
 
     handleDirectorySubtitles(folder, file);
 
-    return url.replace(/\s/g, "%20");
+    return url;
   } else return "Not selected";
 };
 
@@ -46,6 +46,7 @@ window.openDirectory = async () => {
     throw new Error(e);
   }
   if (!obj.canceled) {
+    if (window.directory === obj.filePaths) return;
     window.directoryEntry = await handleDirectorySubtitles(obj.filePaths[0]);
     window.directory = obj.filePaths[0];
     window.videoIndex = 0;
@@ -195,6 +196,7 @@ window.handleDrop = (url, type) => {
         window.subtitleList = [];
         handleDirectorySubtitles(folder, file);
       } else if (stats.isDirectory()) {
+        if (window.directory === url) return;
         window.directoryEntry = await handleDirectorySubtitles(url);
         window.directory = url;
         window.videoIndex = 0;

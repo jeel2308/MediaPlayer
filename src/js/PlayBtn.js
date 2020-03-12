@@ -6,7 +6,10 @@ import {
   MdPause
 } from "react-icons/md";
 import { IconContext } from "react-icons";
-import { CircularProgressbarWithChildren } from "react-circular-progressbar";
+import {
+  CircularProgressbarWithChildren,
+  buildStyles
+} from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import "../css/buttons.css";
 
@@ -25,7 +28,13 @@ const PlayBtn = props => {
         </div>
       )}
       {props.size === "small" && (
-        <CircularProgressbarWithChildren value={props.value || 0}>
+        <CircularProgressbarWithChildren
+          value={props.value || 0}
+          styles={buildStyles({
+            pathColor: "darkorchid",
+            trailColor: "white"
+          })}
+        >
           <div onClick={props.handlePlayPause} className="wrapper">
             <IconContext.Provider value={{ className: props.classValue }}>
               {props.state === "play" || props.state === "canPlay" ? (
