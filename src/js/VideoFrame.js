@@ -132,13 +132,12 @@ class VideoFrame extends React.PureComponent {
     if (window.videoIndex + 1 <= window.directoryEntry.length - 1) {
       window.videoIndex++;
       let url =
-        window.directory.replace(/\s/g, "%20").replace(/\\/g, "\\") +
-        "\\" +
-        window.directoryEntry[window.videoIndex]
-          .replace(/\s/g, "%20")
-          .replace(/\\/g, "\\");
-      // console.log(url);
+        window.directory + "/" + window.directoryEntry[window.videoIndex];
+
       let subtitleUrl = window.subtitleList[window.videoIndex];
+      this.setState(() => ({
+        state: "end"
+      }));
       this.props.updateUrl(url);
       this.props.updateSubtitleUrl(subtitleUrl);
     }
@@ -147,12 +146,11 @@ class VideoFrame extends React.PureComponent {
     if (window.videoIndex - 1 >= 0) {
       window.videoIndex--;
       let url =
-        window.directory.replace(/\s/g, "%20").replace(/\\/g, "\\") +
-        "\\" +
-        window.directoryEntry[window.videoIndex]
-          .replace(/\s/g, "%20")
-          .replace(/\\/g, "\\");
+        window.directory + "/" + window.directoryEntry[window.videoIndex];
       let subtitleUrl = window.subtitleList[window.videoIndex];
+      this.setState(() => ({
+        state: "end"
+      }));
       this.props.updateUrl(url);
       this.props.updateSubtitleUrl(subtitleUrl);
     }
