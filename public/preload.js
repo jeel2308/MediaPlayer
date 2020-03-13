@@ -50,7 +50,9 @@ window.openDirectory = async () => {
     window.directoryEntry = await handleDirectorySubtitles(obj.filePaths[0]);
     window.directory = obj.filePaths[0];
     window.videoIndex = 0;
-    const event = new Event("readyToPlay");
+    const event = new CustomEvent("readyToPlay", {
+      detail: { started: false }
+    });
     window.dispatchEvent(event);
   }
 };
@@ -90,7 +92,13 @@ const handleDirectorySubtitles = (folder, file) => {
 
     .then(folderList => {
       window.directoryEntry = folderList;
-      if (file) window.videoIndex = window.directoryEntry.indexOf(file);
+      if (file) {
+        window.videoIndex = window.directoryEntry.indexOf(file);
+        const event = new CustomEvent("readyToPlay", {
+          detail: { started: true }
+        });
+        window.dispatchEvent(event);
+      }
       const promiseArray = [];
       for (let i = 0; i < folderList.length; i++) {
         const file = folder + "/" + folderList[i];
@@ -119,6 +127,8 @@ const handleDirectorySubtitles = (folder, file) => {
       }
       Promise.all(promiseArray).then(list => {
         window.subtitleList = list;
+        const event = new Event("subtitlesReady");
+        window.dispatchEvent(event);
       });
     });
   if (!file) return list;
@@ -200,7 +210,9 @@ window.handleDrop = (url, type) => {
         window.directoryEntry = await handleDirectorySubtitles(url);
         window.directory = url;
         window.videoIndex = 0;
-        const event = new Event("readyToPlay");
+        const event = new CustomEvent("readyToPlay", {
+          detail: { started: false }
+        });
         window.dispatchEvent(event);
       }
     }

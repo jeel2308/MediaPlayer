@@ -45,6 +45,12 @@ class NavBar extends Component {
             DevTools
           </li>
           <li
+            className="navbar_li new-item"
+            onClick={this.props.setPlayListWidth}
+          >
+            PlayList
+          </li>
+          <li
             className="navbar_li navbar_img"
             id="navbar_right"
             onClick={this.handleMinimize}

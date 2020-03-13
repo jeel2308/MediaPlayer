@@ -1,3 +1,7 @@
+#main {
+  display: flex;
+  flex-direction: column;
+}
 #container {
   position: relative;
   padding: 0;
@@ -10,8 +14,9 @@
   /* height: 100vh; */
   /* left: 50%;
   transform: translateX(-50%); */
-  margin: auto;
+  margin-right: auto;
   object-fit: contain;
+  transition: width 0.7s;
 }
 #controls {
   display: flex;
@@ -66,4 +71,19 @@ video::cue {
   left: 50%;
   transform: translateX(-50%);
   font-size: 30px;
+}
+#playListContainer {
+  background-color: white;
+  color: black;
+  position: absolute;
+  transition: right 0.7s;
+  width: 25%;
+  right: 0%;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+}
+#mainPage {
+  display: flex;
+  flex-direction: row;
 }

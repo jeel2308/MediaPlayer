@@ -2,7 +2,7 @@ import React from "react";
 import "../css/videoFrame.css";
 import { MdReplay5 } from "react-icons/md";
 import PlayBtn from "./PlayBtn";
-import SkipBtn from "./SkipBtn";
+import Playlist from "./Playlist";
 import Controls from "./Controls";
 // import Video from "./Video";
 // import * as url2 from "C:\\Users\\vatsal\\Desktop\\project2\\src\\try.mkv";
@@ -29,8 +29,18 @@ class VideoFrame extends React.PureComponent {
   componentDidMount() {
     window.addEventListener("resize", this.handleResize);
     window.addEventListener("readyToPlay", event => {
-      this.props.updateUrl(window.directory + "/" + window.directoryEntry[0]);
-      this.props.updateSubtitleUrl("");
+      if (!event.detail.started) {
+        this.props.updateUrl(window.directory + "/" + window.directoryEntry[0]);
+        this.props.updateSubtitleUrl("");
+      }
+    });
+    window.addEventListener("subtitlesReady", () => {
+      this.props.updateSubtitleUrl(window.subtitleList[window.videoIndex]);
+      if (window.subtitleList[window.videoIndex]) {
+        this.setState(() => ({
+          subtitlesBtn: "flex"
+        }));
+      }
     });
     this.subtitle.current.addEventListener("cuechange", e => {
       let text = "";
@@ -252,17 +262,7 @@ class VideoFrame extends React.PureComponent {
       subtitlesBtn: !this.props.subtitleUrl ? "none" : "flex",
       subtitlesBtnState: "none"
     }));
-    setTimeout(() => {
-      if (this.state.subtitlesBtn === "flex") return;
-      const subtitleUrl = window.subtitleList[window.videoIndex];
-      if (subtitleUrl === "") return;
-      else {
-        this.props.updateSubtitleUrl(subtitleUrl);
-        this.setState(() => ({
-          subtitlesBtn: "flex"
-        }));
-      }
-    }, 5000);
+
     // this.video.current.textTracks[0].mode = "hidden";
     // console.log(this.video.current.textTracks[0].cues);
   };
@@ -285,6 +285,7 @@ class VideoFrame extends React.PureComponent {
     const file = e.dataTransfer.files[0].path;
     const type = e.dataTransfer.files[0].type;
     window.handleDrop(file, type);
+    console.log(file);
     if (type.match(/video\//)) {
       this.props.updateUrl(file);
       this.props.updateSubtitleUrl("");
@@ -292,7 +293,7 @@ class VideoFrame extends React.PureComponent {
   };
   render() {
     return (
-      <>
+      <div id="mainPage">
         <div
           id="container"
           tabIndex="0"
@@ -303,7 +304,11 @@ class VideoFrame extends React.PureComponent {
             top: 0,
             height:
               this.state.fullScreen === "true" ? "100%" : this.state.height,
-            width: this.state.fullScreen === "true" ? "100%" : this.state.width,
+            width:
+              this.state.fullScreen === "true"
+                ? "100%"
+                : `${parseInt(this.state.width) *
+                    (this.props.playListRight === "0%" ? 0.75 : 1)}%`,
             zIndex: this.state.fullScreen === "true" ? 2 : 0
           }}
           onKeyDown={this.handleKey}
@@ -369,7 +374,16 @@ class VideoFrame extends React.PureComponent {
             }}
           />
         </div>
-      </>
+        <div
+          id="playListContainer"
+          style={{
+            // display: this.props.playListRight === "-25%" ? "none" : "block",
+            right: this.props.playListRight
+          }}
+        >
+          <Playlist />
+        </div>
+      </div>
     );
   }
 }
