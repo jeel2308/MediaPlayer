@@ -1,16 +1,16 @@
-const files = {
-  directoryList: [],
+const fileList = {
+  fileEntries: [],
   directory: "",
   subtitleList: [],
   currentIndex: -1
 };
 
-const fileListReducer = (state = files, action) => {
+const fileListReducer = (state = fileList, action) => {
   switch (action.type) {
     case "UPDATE_FILES":
       return {
         ...state,
-        directoryList: action.directoryList,
+        fileEntries: action.fileEntries,
         directory: action.directory
       };
     case "UPDATE_SUBTITLE_LIST":

@@ -52,6 +52,7 @@ class Controls extends React.PureComponent {
     // }
   };
   render() {
+    console.log(this.props.data.subtitlesBtn);
     return (
       <>
         {/*<div id="largeBtns">

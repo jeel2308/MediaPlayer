@@ -1,7 +1,7 @@
-export const updateList = ({ directoryList, directory }) => {
+export const updateList = ({ fileEntries, directory }) => {
   return {
     type: "UPDATE_FILES",
-    directoryList,
+    fileEntries,
     directory
   };
 };

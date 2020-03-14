@@ -25,13 +25,13 @@ class Playlist extends React.PureComponent {
   }
 
   handleClick = e => {
-    const index = this.props.fileList.directoryList.indexOf(
+    const index = this.props.fileList.fileEntries.indexOf(
       e.target.innerHTML.trim()
     );
     const url =
       this.props.fileList.directory +
       "/" +
-      this.props.fileList.directoryList[index];
+      this.props.fileList.fileEntries[index];
     const subtitleUrl = this.props.fileList.subtitleList[index];
     // this.setState(() => ({
     //   currentIndex: index
@@ -44,14 +44,14 @@ class Playlist extends React.PureComponent {
     return (
       <>
         <div id="playlist" onClick={this.handleClick}>
-          {this.props.fileList.directoryList
-            ? this.props.fileList.directoryList.map(item => (
+          {this.props.fileList.fileEntries
+            ? this.props.fileList.fileEntries.map(item => (
                 <PlaylistItem
-                  key={this.props.fileList.directoryList.indexOf(item)}
+                  key={this.props.fileList.fileEntries.indexOf(item)}
                   src={item}
                   active={
                     this.props.fileList.currentIndex ===
-                    this.props.fileList.directoryList.indexOf(item)
+                    this.props.fileList.fileEntries.indexOf(item)
                   }
                 />
               ))

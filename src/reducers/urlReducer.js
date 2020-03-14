@@ -11,7 +11,7 @@ const urlReducer = (state = urlState, action) => {
     };
   } else if (action.type === "UPDATE_SUBTITLE") {
     return {
-      url: state.url,
+      ...state,
       subtitleUrl: action.subtitleUrl
     };
   } else return state;
