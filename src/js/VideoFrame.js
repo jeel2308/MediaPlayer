@@ -141,10 +141,14 @@ class VideoFrame extends React.PureComponent {
   handleNext = () => {
     if (window.videoIndex + 1 <= window.directoryEntry.length - 1) {
       window.videoIndex++;
-      let url =
+      const url =
         window.directory + "/" + window.directoryEntry[window.videoIndex];
 
-      let subtitleUrl = window.subtitleList[window.videoIndex];
+      const subtitleUrl = window.subtitleList[window.videoIndex];
+      const event = new CustomEvent("changedIndex", {
+        detail: window.videoIndex
+      });
+      window.dispatchEvent(event);
       this.setState(() => ({
         state: "end"
       }));
@@ -155,9 +159,13 @@ class VideoFrame extends React.PureComponent {
   handlePrevious = () => {
     if (window.videoIndex - 1 >= 0) {
       window.videoIndex--;
-      let url =
+      const url =
         window.directory + "/" + window.directoryEntry[window.videoIndex];
-      let subtitleUrl = window.subtitleList[window.videoIndex];
+      const subtitleUrl = window.subtitleList[window.videoIndex];
+      const event = new CustomEvent("changedIndex", {
+        detail: window.videoIndex
+      });
+      window.dispatchEvent(event);
       this.setState(() => ({
         state: "end"
       }));
@@ -243,12 +251,12 @@ class VideoFrame extends React.PureComponent {
     }));
     if (!this.video.current.loop) {
       if (window.videoIndex + 1 <= window.directoryEntry.length - 1) {
-        let url =
-          window.directory.replace(/\s/g, "%20").replace(/\\/g, "\\") +
-          "\\" +
-          window.directoryEntry[++window.videoIndex]
-            .replace(/\s/g, "%20")
-            .replace(/\\/g, "\\");
+        const url =
+          window.directory + "/" + window.directoryEntry[++window.videoIndex];
+        const event = new CustomEvent("changedIndex", {
+          detail: window.videoIndex
+        });
+        window.dispatchEvent(event);
         this.props.updateUrl(url);
       }
     }
@@ -262,9 +270,6 @@ class VideoFrame extends React.PureComponent {
       subtitlesBtn: !this.props.subtitleUrl ? "none" : "flex",
       subtitlesBtnState: "none"
     }));
-
-    // this.video.current.textTracks[0].mode = "hidden";
-    // console.log(this.video.current.textTracks[0].cues);
   };
   setSubtitleState = () => {
     if (this.video.current.textTracks[0].mode === "disabled") {
@@ -293,7 +298,7 @@ class VideoFrame extends React.PureComponent {
   };
   render() {
     return (
-      <div id="mainPage">
+      <>
         <div
           id="container"
           tabIndex="0"
@@ -301,7 +306,7 @@ class VideoFrame extends React.PureComponent {
           style={{
             position:
               this.state.fullScreen === "false" ? "relative" : "absolute",
-            top: 0,
+            top: "0px",
             height:
               this.state.fullScreen === "true" ? "100%" : this.state.height,
             width:
@@ -325,6 +330,7 @@ class VideoFrame extends React.PureComponent {
               width:
                 this.state.fullScreen === "true" ? "100vw" : this.state.width
             }}
+            // src={this.props.url + "#t=15"} /*to start video from 15sec*/
             src={this.props.url}
             onTimeUpdate={this.handleTimeUpdate}
             onLoadedMetadata={this.setVideoState}
@@ -381,9 +387,12 @@ class VideoFrame extends React.PureComponent {
             right: this.props.playListRight
           }}
         >
-          <Playlist />
+          <Playlist
+            updateUrl={this.props.updateUrl}
+            updateSubtitleUrl={this.props.updateSubtitleUrl}
+          />
         </div>
-      </div>
+      </>
     );
   }
 }

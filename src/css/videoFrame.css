@@ -78,12 +78,8 @@ video::cue {
   position: absolute;
   transition: right 0.7s;
   width: 25%;
+  top: 0; /* to align with video frame*/
   right: 0%;
-  top: 0;
-  bottom: 0;
+  height: 100vh;
   z-index: 1;
-}
-#mainPage {
-  display: flex;
-  flex-direction: row;
 }

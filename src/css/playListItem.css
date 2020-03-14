@@ -1,0 +1,12 @@
+.playListItem {
+  border-bottom: 1px solid black;
+}
+.active {
+  background-color: gold;
+  font-style: italic;
+}
+.playListItem:hover {
+  cursor: pointer;
+  background-color: gold;
+  font-style: italic;
+}

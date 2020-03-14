@@ -1,4 +1,9 @@
 #playlist {
+  top: 26.4px; /*to start after navbar*/
   display: flex;
+  position: relative;
   flex-direction: column;
+  overflow-x: hidden; /* to hide unnecessary scrollbar */
+  overflow-y: scroll; /* to have scrollbar for only this element instead of page*/
+  height: 100%; /*this won't work unless height is set*/
 }

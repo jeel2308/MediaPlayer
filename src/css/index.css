@@ -1,7 +1,9 @@
 body {
   margin: 0;
   padding: 0;
-  overflow: hidden;
+  /* overflow: hidden; */
+  overflow: hidden; /*to hide initial overflow*/
+  overflow-x: hidden; /* to hide scrollbar during playlist is hidden*/
   font-family: sans-serif;
 }
 #controlsContainer {

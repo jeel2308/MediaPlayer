@@ -7,7 +7,7 @@
   border: 0px solid white;
   background-color: white;
   padding: 0 2.5px;
-  margin: 5px px;
+  margin: 5px;
 }
 .ctrlBtns:hover {
   color: white;
@@ -35,8 +35,8 @@
   padding: 0;
   width: 100%;
   position: sticky;
-  top: 0;
-  z-index: 1;
+  top: 0px;
+  z-index: 3; /* to overcome playlist  */
   list-style-type: none;
 }
 .navbar_li {
