@@ -2,22 +2,31 @@ import React, { Component } from "react";
 import "../css/navbar.css";
 import { IoIosClose } from "react-icons/io";
 import { IconContext } from "react-icons";
+import { connect } from "react-redux";
+import { updateUrl } from "../actions/updateUrl";
+import { currentIndex } from "../actions/updateList";
 // import "../css/font-awesome.min.css";
 
 class NavBar extends Component {
   handleFile = async () => {
-    let url = await window.openFile();
+    const { url, index } = await window.openFile(
+      this.props.fileList.directory,
+      this.props.fileList.directoryList
+    );
     if (url === "Not selected") return;
     let subtitle = "";
-    if (window.subtitleList) {
-      subtitle = window.subtitleList[window.videoIndex];
-      // console.log(subtitle, window.videoIndex);
+    if (this.props.fileList.subtitleList) {
+      subtitle = this.props.fileList.subtitleList[
+        this.props.fileList.currentIndex
+      ];
     }
-    this.props.updateUrl(url);
-    this.props.updateSubtitleUrl(subtitle);
+    if (index !== -1) {
+      this.props.dispatch(currentIndex({ currentIndex: index }));
+    }
+    this.props.dispatch(updateUrl({ url, subtitleUrl: subtitle }));
   };
   handleFolder = () => {
-    window.openDirectory();
+    window.openDirectory(this.props.fileList.directory);
   };
   handleMinimize = () => {
     if (window.handleMinimize) window.handleMinimize();
@@ -71,4 +80,10 @@ class NavBar extends Component {
   }
 }
 
-export default NavBar;
+const mapStateToProps = (state, props) => {
+  return {
+    urlState: state.urlState,
+    fileList: state.fileList
+  };
+};
+export default connect(mapStateToProps)(NavBar);

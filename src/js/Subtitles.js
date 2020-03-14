@@ -5,6 +5,7 @@ import { IconContext } from "react-icons";
 import ReactTooltip from "react-tooltip";
 import "../css/buttons.css";
 const Subtitles = props => {
+  console.log(props);
   return (
     <div
       onClick={props.handleSubtitles}

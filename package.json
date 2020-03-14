@@ -1,7 +1,7 @@
 {
-  "name": "cra-electron",
-  "description": "CRA + Electron sitting in a tree",
-  "author": "Kitze",
+  "name": "media-player",
+  "description": "MediaPlayer built with Electron and React",
+  "author": "Jeel",
   "version": "0.2.7",
   "private": true,
   "dependencies": {
@@ -13,7 +13,9 @@
     "react-circular-progressbar": "^2.0.3",
     "react-dom": "^16.8.6",
     "react-icons": "^3.9.0",
+    "react-redux": "^7.2.0",
     "react-tooltip": "^4.1.0",
+    "redux": "^4.0.5",
     "update-electron-app": "^1.2.0"
   },
   "devDependencies": {

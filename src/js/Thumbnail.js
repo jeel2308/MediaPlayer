@@ -22,7 +22,7 @@ class Thumbnail extends React.PureComponent {
           controls={false}
           ref={this}
         >
-          <source src="C:\\Users\\vatsal\\Desktop\\project2\\src\\try.mkv" />
+          <source src="" />
         </video>
       </div>
     );

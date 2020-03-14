@@ -9,8 +9,8 @@ window.handleMinimize = handleNav.handleMinimize;
 window.handleMaximize = handleNav.handleMaximize;
 window.handleClose = handleNav.handleClose;
 window.toggleDevTools = handleNav.toggleDevTools;
-window.directory = [];
-window.openFile = async () => {
+// window.directory = [];
+window.openFile = async (directory, directoryList) => {
   let obj = "";
   try {
     obj = await ipcRenderer.invoke("openFile");
@@ -19,26 +19,26 @@ window.openFile = async () => {
   }
   if (!obj.canceled) {
     url = obj.filePaths[0];
-    let subtitleUrl = url.replace(/\.mp4|\.mkv/, ".vtt");
-    let index = url.lastIndexOf("\\");
-    let folder = url.substr(0, index);
-    let file = url.substr(index + 1, url.length);
-    if (folder === window.directory) {
-      window.videoIndex = window.directoryEntry.indexOf(file);
-      return url.replace(/\s/g, "%20");
+    const subtitleUrl = url.replace(/\.mp4|\.mkv/, ".vtt");
+    const index = url.lastIndexOf("\\");
+    const folder = url.substr(0, index);
+    const file = url.substr(index + 1, url.length);
+    if (folder === directory) {
+      const index = directoryList.indexOf(file);
+      return { url, index };
     }
-    window.videoIndex = -1;
-    window.directory = folder;
-    window.directoryEntry = [];
-    window.subtitleList = [];
+    // window.videoIndex = -1;
+    // window.directory = folder;
+    // window.directoryEntry = [];
+    // window.subtitleList = [];
 
     handleDirectorySubtitles(folder, file);
 
-    return url;
+    return { url, index: -1 };
   } else return "Not selected";
 };
 
-window.openDirectory = async () => {
+window.openDirectory = async directory => {
   let obj = "";
   try {
     obj = await ipcRenderer.invoke("openFolder");
@@ -46,14 +46,18 @@ window.openDirectory = async () => {
     throw new Error(e);
   }
   if (!obj.canceled) {
-    if (window.directory === obj.filePaths) return;
-    window.directoryEntry = await handleDirectorySubtitles(obj.filePaths[0]);
-    window.directory = obj.filePaths[0];
-    window.videoIndex = 0;
-    const event = new CustomEvent("readyToPlay", {
-      detail: { started: false }
-    });
-    window.dispatchEvent(event);
+    // if (window.directory === obj.filePaths) return;
+    // window.directoryEntry = await handleDirectorySubtitles(obj.filePaths[0]);
+
+    // window.directory = obj.filePaths[0];
+    // window.videoIndex = 0;
+    if (directory !== obj.filePaths[0]) {
+      const folderList = await handleDirectorySubtitles(obj.filePaths[0]);
+      const event = new CustomEvent("readyToPlay", {
+        detail: { folderList, index: 0, directory: obj.filePaths[0] }
+      });
+      window.dispatchEvent(event);
+    }
   }
 };
 
@@ -91,11 +95,16 @@ const handleDirectorySubtitles = (folder, file) => {
     })
 
     .then(folderList => {
-      window.directoryEntry = folderList;
+      // window.directoryEntry = folderList;
       if (file) {
-        window.videoIndex = window.directoryEntry.indexOf(file);
+        // window.videoIndex = window.directoryEntry.indexOf(file);
         const event = new CustomEvent("readyToPlay", {
-          detail: { started: true }
+          detail: {
+            folderList,
+            index: folderList.indexOf(file),
+            started: true,
+            directory: folder
+          }
         });
         window.dispatchEvent(event);
       }
@@ -126,8 +135,8 @@ const handleDirectorySubtitles = (folder, file) => {
         promiseArray.push(p);
       }
       Promise.all(promiseArray).then(list => {
-        window.subtitleList = list;
-        const event = new Event("subtitlesReady");
+        // window.subtitleList = list;
+        const event = new CustomEvent("subtitlesReady", { detail: list });
         window.dispatchEvent(event);
       });
     });
@@ -189,7 +198,7 @@ const srtToVtt = srtfile => {
     });
 };
 
-window.handleDrop = (url, type) => {
+window.handleDrop = (url, type, fileList, directory) => {
   fs.stat(url, async (err, stats) => {
     if (err) reject("");
     else {
@@ -197,21 +206,25 @@ window.handleDrop = (url, type) => {
         const index = url.lastIndexOf("\\");
         const folder = url.substr(0, index);
         const file = url.substr(index + 1, url.length);
-        if (folder === window.directory) {
-          window.videoIndex = window.directoryEntry.indexOf(file);
+        if (folder === directory) {
+          const index = fileList.indexOf(file);
+          const event = new CustomEvent("handleDrop", { detail: index });
+          window.dispatchEvent(event);
+          return;
         }
-        window.videoIndex = -1;
-        window.directory = folder;
-        window.directoryEntry = [];
-        window.subtitleList = [];
+        // window.videoIndex = -1;
+        // window.directory = folder;
+        // window.directoryEntry = [];
+        // window.subtitleList = [];
         handleDirectorySubtitles(folder, file);
       } else if (stats.isDirectory()) {
-        if (window.directory === url) return;
-        window.directoryEntry = await handleDirectorySubtitles(url);
-        window.directory = url;
-        window.videoIndex = 0;
+        if (directory === url) return;
+        // window.directoryEntry = await handleDirectorySubtitles(url);
+        const folderList = await handleDirectorySubtitles(url);
+        // window.directory = url;
+        // window.videoIndex = 0;
         const event = new CustomEvent("readyToPlay", {
-          detail: { started: false }
+          detail: { folderList, index: 0, directory: url }
         });
         window.dispatchEvent(event);
       }

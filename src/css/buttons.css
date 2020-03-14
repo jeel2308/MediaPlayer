@@ -8,6 +8,7 @@
 
 div[data-test-id="CircularProgressbarWithChildren"] {
   margin: 0 10px;
+  width: 50px;
 }
 
 .fontSize {
