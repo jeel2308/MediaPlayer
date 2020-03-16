@@ -17,8 +17,8 @@ class NavBar extends Component {
     let subtitleUrl = "";
     if (index !== -1) {
       subtitleUrl = this.props.fileList.subtitleList[index];
-      if (subtitleUrl)
-        subtitleUrl = this.props.fileList.directory + "/" + subtitleUrl;
+      // if (subtitleUrl)
+      //   subtitleUrl = this.props.fileList.directory + "/" + subtitleUrl;
       this.props.dispatch(currentIndex({ currentIndex: index }));
     }
     this.props.dispatch(updateUrl({ url, subtitleUrl }));

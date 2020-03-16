@@ -97,7 +97,7 @@ const handleDirectorySubtitles = (folder, file) => {
       const fileIndex = fileList.indexOf(file1);
       if (fileIndex !== -1) {
         return new Promise((resolve, reject) => {
-          resolve(file1);
+          resolve(folder + "/" + file1);
         });
       } else {
         const file1 = file.substr(0, index) + ".srt";

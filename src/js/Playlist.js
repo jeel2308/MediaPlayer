@@ -25,20 +25,15 @@ class Playlist extends React.PureComponent {
   }
 
   handleClick = e => {
-    const index = this.props.fileList.fileEntries.indexOf(
-      e.target.innerHTML.trim()
-    );
-    const url =
-      this.props.fileList.directory +
-      "/" +
-      this.props.fileList.fileEntries[index];
-    const subtitleUrl =
-      this.props.fileList.directory +
-      "/" +
-      this.props.fileList.subtitleList[index];
-    // this.setState(() => ({
-    //   currentIndex: index
-    // }));
+    const s = e.target.innerText || e.target.parentNode.innerText; // innerHTML will treat & as &amp;
+    let index = s.lastIndexOf(">");
+    let url = s.substr(index + 1);
+    console.log(url);
+    index = this.props.fileList.fileEntries.indexOf(url);
+    url = this.props.fileList.directory + "/" + url;
+    console.log(url);
+    const subtitleUrl = this.props.fileList.subtitleList[index];
+    // url = url.replace(/\s/, "%20");
     this.props.dispatch(updateUrl({ url, subtitleUrl }));
     this.props.dispatch(currentIndex({ currentIndex: index }));
   };
