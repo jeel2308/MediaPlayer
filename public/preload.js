@@ -45,7 +45,7 @@ window.openDirectory = async directory => {
   }
 };
 
-const handleDirectorySubtitles = (folder, file) => {
+const handleDirectorySubtitles = (folder, file, type) => {
   const list = new Promise((resolve, reject) => {
     fs.readdir(folder, (err, files) => {
       if (err) reject([]);
@@ -69,7 +69,7 @@ const handleDirectorySubtitles = (folder, file) => {
           return false;
       }
     });
-    if (!file) {
+    if (!file && !type) {
       const event = new CustomEvent("readyToPlay", {
         detail: {
           fileList: videoFileList,
@@ -79,7 +79,7 @@ const handleDirectorySubtitles = (folder, file) => {
         }
       });
       window.dispatchEvent(event);
-    } else {
+    } else if (file && !type) {
       const event = new CustomEvent("readyToPlay", {
         detail: {
           fileList: videoFileList,
@@ -89,8 +89,10 @@ const handleDirectorySubtitles = (folder, file) => {
         }
       });
       window.dispatchEvent(event);
+    } else {
+      const event = new CustomEvent("refreshUrl", { detail: videoFileList });
+      window.dispatchEvent(event);
     }
-
     const subtitleList = videoFileList.map(file => {
       const index = file.lastIndexOf(".");
       const file1 = file.substr(0, index) + ".vtt";
@@ -116,8 +118,17 @@ const handleDirectorySubtitles = (folder, file) => {
       }
     });
     Promise.all(subtitleList).then(subtitleList => {
-      const event = new CustomEvent("subtitlesReady", { detail: subtitleList });
-      window.dispatchEvent(event);
+      if (!type) {
+        const event = new CustomEvent("subtitlesReady", {
+          detail: subtitleList
+        });
+        window.dispatchEvent(event);
+      } else {
+        const event = new CustomEvent("refreshSubtitle", {
+          detail: subtitleList
+        });
+        window.dispatchEvent(event);
+      }
     });
     //   const thumbnails = videoFileList.map(file => {
     //     const index = file.lastIndexOf(".");
@@ -307,4 +318,8 @@ window.handleDrop = (url, type, fileList, directory) => {
       }
     }
   });
+};
+
+window.handleRefresh = directory => {
+  handleDirectorySubtitles(directory, "", "refresh");
 };

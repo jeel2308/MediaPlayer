@@ -70,6 +70,46 @@ class VideoFrame extends React.PureComponent {
         }));
       }
     });
+    window.addEventListener("refreshSubtitle", e => {
+      const newSubtitleList = e.detail;
+
+      let flag1 = true;
+      let flag2 = true;
+      const oldsubtitleList = this.props.fileList.subtitleList;
+      for (let i = 0; i < oldsubtitleList.length; i++) {
+        const index = newSubtitleList.indexOf(oldsubtitleList[i]);
+        if (index === -1) {
+          flag1 = false;
+          break;
+        }
+      }
+      for (let i = 0; i < newSubtitleList.length; i++) {
+        const index = oldsubtitleList.indexOf(newSubtitleList[i]);
+        if (index === -1) {
+          flag2 = false;
+          break;
+        }
+      }
+      if (flag1 && flag2 && newSubtitleList.length === oldsubtitleList.length)
+        return;
+      else {
+        // update list
+        this.props.dispatch(
+          updateSubtitleList({ subtitleList: newSubtitleList })
+        );
+        const currentSubtitle = this.props.fileList.subtitleList[
+          this.props.fileList.currentIndex
+        ];
+        this.props.dispatch(
+          updateSubtitleUrl({ subtitleUrl: currentSubtitle })
+        );
+        if (currentSubtitle) {
+          this.setState(() => ({
+            subtitlesBtn: "flex"
+          }));
+        }
+      }
+    });
     this.subtitle.current.addEventListener("cuechange", e => {
       let text = "";
       if (e.target.track.activeCues[0]) {

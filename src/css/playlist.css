@@ -7,3 +7,10 @@
   overflow-y: scroll; /* to have scrollbar for only this element instead of page*/
   height: 95%; /*this won't work unless height is set*/ /* height 100% will hide some content of last item in some cases*/
 }
+#refresh {
+  /* border-bottom: 1px solid black; */
+  display: block;
+  position: relative;
+  top: 26.4px;
+  width: 100%;
+}

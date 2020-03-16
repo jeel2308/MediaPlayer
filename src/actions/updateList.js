@@ -6,6 +6,12 @@ export const updateList = ({ fileEntries, directory }) => {
   };
 };
 
+export const refreshList = ({ fileEntries }) => {
+  return {
+    type: "REFRESH_LIST",
+    fileEntries
+  };
+};
 export const updateSubtitleList = ({ subtitleList }) => {
   return {
     type: "UPDATE_SUBTITLE_LIST",

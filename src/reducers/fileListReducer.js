@@ -23,6 +23,11 @@ const fileListReducer = (state = fileList, action) => {
         ...state,
         currentIndex: action.currentIndex
       };
+    case "REFRESH_LIST":
+      return {
+        ...state,
+        fileEntries: action.fileEntries
+      };
     default:
       return state;
   }
