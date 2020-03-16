@@ -38,9 +38,11 @@
   top: 0px;
   z-index: 3; /* to overcome playlist  */
   list-style-type: none;
+  -webkit-app-region: drag;
 }
 .navbar_li {
   padding: 4px 5px;
+  -webkit-app-region: no-drag;
 }
 .navbar_li:hover {
   cursor: pointer;

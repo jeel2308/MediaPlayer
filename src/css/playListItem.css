@@ -1,5 +1,8 @@
 .playListItem {
   border-bottom: 1px solid black;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 .active {
   background-color: gold;
@@ -9,4 +12,8 @@
   cursor: pointer;
   background-color: gold;
   font-style: italic;
+}
+.thumbnail {
+  height: 100px;
+  width: 100px;
 }

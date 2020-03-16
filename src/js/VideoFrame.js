@@ -33,13 +33,13 @@ class VideoFrame extends React.PureComponent {
   componentDidMount() {
     window.addEventListener("resize", this.handleResize);
     window.addEventListener("readyToPlay", event => {
-      const list = event.detail.folderList;
+      const list = event.detail.fileList;
       const index = event.detail.index;
-      const started = event.detail.started || false;
+      const started = event.detail.started;
       const directory = event.detail.directory;
       this.props.dispatch(updateList({ fileEntries: list, directory }));
       this.props.dispatch(currentIndex({ currentIndex: index }));
-      if (!event.detail.started) {
+      if (!started) {
         this.props.dispatch(
           updateUrl({
             // url: window.directory + "/" + window.fileEntries[0],
@@ -55,15 +55,18 @@ class VideoFrame extends React.PureComponent {
     window.addEventListener("subtitlesReady", e => {
       const subtitleList = e.detail;
       this.props.dispatch(updateSubtitleList({ subtitleList }));
+      const subtitle = this.props.fileList.subtitleList[
+        this.props.fileList.currentIndex
+      ];
       this.props.dispatch(
         updateSubtitleUrl({
           // subtitleUrl: window.subtitleList[window.videoIndex]
-          subtitleUrl: this.props.fileList.subtitleList[
-            this.props.fileList.currentIndex
-          ]
+          subtitleUrl: subtitle
+            ? this.props.fileList.directory + "/" + subtitle
+            : subtitle
         })
       );
-      if (this.props.fileList.subtitleList[this.props.fileList.currentIndex]) {
+      if (subtitle) {
         this.setState(() => ({
           subtitlesBtn: "flex"
         }));
@@ -173,18 +176,13 @@ class VideoFrame extends React.PureComponent {
     let index =
       (this.props.fileList.currentIndex + 1) %
       this.props.fileList.fileEntries.length;
-
-    // const url =
-    //   window.directory + "/" + window.fileEntries[window.videoIndex];
     const url =
       this.props.fileList.directory +
       "/" +
       this.props.fileList.fileEntries[index];
-    const subtitleUrl = this.props.fileList.subtitleList[index];
-    // const event = new CustomEvent("changedIndex", {
-    //   detail: window.videoIndex
-    // });
-    // window.dispatchEvent(event);
+    let subtitleUrl = this.props.fileList.subtitleList[index];
+    if (subtitleUrl)
+      subtitleUrl = this.props.fileList.directory + "/" + subtitleUrl;
     this.props.dispatch(updateUrl({ url, subtitleUrl }));
     this.props.dispatch(currentIndex({ currentIndex: index }));
   };
@@ -199,7 +197,9 @@ class VideoFrame extends React.PureComponent {
       this.props.fileList.directory +
       "/" +
       this.props.fileList.fileEntries[index];
-    const subtitleUrl = this.props.fileList.subtitleList[index];
+    let subtitleUrl = this.props.fileList.subtitleList[index];
+    if (subtitleUrl)
+      subtitleUrl = this.props.fileList.directory + "/" + subtitleUrl;
     // const event = new CustomEvent("changedIndex", {
     //   detail: window.videoIndex
     // });
@@ -288,7 +288,9 @@ class VideoFrame extends React.PureComponent {
         this.props.fileList.directory +
         "/" +
         this.props.fileList.fileEntries[index];
-      const subtitleUrl = this.props.fileList.subtitleList[index];
+      let subtitleUrl = this.props.fileList.subtitleList[index];
+      if (subtitleUrl)
+        subtitleUrl = this.props.fileList.directory + "/" + subtitleUrl;
       this.setState(() => ({
         state: "end"
       }));

@@ -25,8 +25,7 @@ class Controls extends React.PureComponent {
   handleReplay = () => {
     this.props.handlers.handleReplay();
     // const index = this.state.replayClass.indexOf("animate2");
-    // console.log(index);
-    // console.log(index);
+
     // if (index === -1) {
     //   this.setState(() => ({
     //     replayClass: "BigBtn animate2"
@@ -40,7 +39,7 @@ class Controls extends React.PureComponent {
   handleForward = () => {
     this.props.handlers.handleForward();
     // const index = this.state.forwardClass.indexOf("animate2");
-    // console.log(index);
+
     // if (index === -1) {
     //   this.setState(() => ({
     //     forwardClass: "BigBtn animate2"
@@ -52,7 +51,6 @@ class Controls extends React.PureComponent {
     // }
   };
   render() {
-    console.log(this.props.data.subtitlesBtn);
     return (
       <>
         {/*<div id="largeBtns">

@@ -11,19 +11,17 @@ class NavBar extends Component {
   handleFile = async () => {
     const { url, index } = await window.openFile(
       this.props.fileList.directory,
-      this.props.fileList.directoryList
+      this.props.fileList.fileEntries
     );
     if (url === "Not selected") return;
-    let subtitle = "";
-    if (this.props.fileList.subtitleList) {
-      subtitle = this.props.fileList.subtitleList[
-        this.props.fileList.currentIndex
-      ];
-    }
+    let subtitleUrl = "";
     if (index !== -1) {
+      subtitleUrl = this.props.fileList.subtitleList[index];
+      if (subtitleUrl)
+        subtitleUrl = this.props.fileList.directory + "/" + subtitleUrl;
       this.props.dispatch(currentIndex({ currentIndex: index }));
     }
-    this.props.dispatch(updateUrl({ url, subtitleUrl: subtitle }));
+    this.props.dispatch(updateUrl({ url, subtitleUrl }));
   };
   handleFolder = () => {
     window.openDirectory(this.props.fileList.directory);
@@ -42,40 +40,38 @@ class NavBar extends Component {
   };
   render() {
     return (
-      <>
-        <ul id="navbar">
-          <li className="navbar_li nav-item" onClick={this.handleFile}>
-            Open File
-          </li>
-          <li className="navbar_li nav-item" onClick={this.handleFolder}>
-            Open Folder
-          </li>
-          <li className="navbar_li nav-item" onClick={this.toggleDevTools}>
-            DevTools
-          </li>
-          <li
-            className="navbar_li new-item"
-            onClick={this.props.setPlayListWidth}
-          >
-            PlayList
-          </li>
-          <li
-            className="navbar_li navbar_img"
-            id="navbar_right"
-            onClick={this.handleMinimize}
-          >
-            <div id="window-minimize"></div>
-          </li>
-          <li className="navbar_li navbar_img" onClick={this.handleMaximize}>
-            <div id="window-maximize"></div>
-          </li>
-          <li className="navbar_li navbar_img" onClick={this.handleClose}>
-            <IconContext.Provider value={{ className: "closeBtn" }}>
-              <IoIosClose />
-            </IconContext.Provider>
-          </li>
-        </ul>
-      </>
+      <ul id="navbar">
+        <li className="navbar_li nav-item" onClick={this.handleFile}>
+          Open File
+        </li>
+        <li className="navbar_li nav-item" onClick={this.handleFolder}>
+          Open Folder
+        </li>
+        <li className="navbar_li nav-item" onClick={this.toggleDevTools}>
+          DevTools
+        </li>
+        <li
+          className="navbar_li new-item"
+          onClick={this.props.setPlayListWidth}
+        >
+          PlayList
+        </li>
+        <li
+          className="navbar_li navbar_img"
+          id="navbar_right"
+          onClick={this.handleMinimize}
+        >
+          <div id="window-minimize"></div>
+        </li>
+        <li className="navbar_li navbar_img" onClick={this.handleMaximize}>
+          <div id="window-maximize"></div>
+        </li>
+        <li className="navbar_li navbar_img" onClick={this.handleClose}>
+          <IconContext.Provider value={{ className: "closeBtn" }}>
+            <IoIosClose />
+          </IconContext.Provider>
+        </li>
+      </ul>
     );
   }
 }

@@ -19,20 +19,7 @@ import "../css/index.css";
 
 class App extends React.Component {
   state = {
-    url: "",
-    subtitleUrl: "",
     playListRight: "-25%"
-  };
-  updateUrl = url => {
-    console.log(url);
-    this.setState(() => ({
-      url
-    }));
-  };
-  updateSubtitleUrl = subtitleUrl => {
-    this.setState(() => ({
-      subtitleUrl
-    }));
   };
   setPlayListRight = () => {
     this.setState(prevState => ({
@@ -42,11 +29,7 @@ class App extends React.Component {
   render() {
     return (
       <div id="video-player">
-        <NavBar
-          updateUrl={this.updateUrl}
-          updateSubtitleUrl={this.updateSubtitleUrl}
-          setPlayListWidth={this.setPlayListRight}
-        />
+        <NavBar setPlayListWidth={this.setPlayListRight} />
         <VideoFrame playListRight={this.state.playListRight} />
       </div>
     );

@@ -32,7 +32,10 @@ class Playlist extends React.PureComponent {
       this.props.fileList.directory +
       "/" +
       this.props.fileList.fileEntries[index];
-    const subtitleUrl = this.props.fileList.subtitleList[index];
+    const subtitleUrl =
+      this.props.fileList.directory +
+      "/" +
+      this.props.fileList.subtitleList[index];
     // this.setState(() => ({
     //   currentIndex: index
     // }));
@@ -48,6 +51,7 @@ class Playlist extends React.PureComponent {
             ? this.props.fileList.fileEntries.map(item => (
                 <PlaylistItem
                   key={this.props.fileList.fileEntries.indexOf(item)}
+                  directory={this.props.fileList.directory}
                   src={item}
                   active={
                     this.props.fileList.currentIndex ===

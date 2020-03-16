@@ -5,5 +5,5 @@
   flex-direction: column;
   overflow-x: hidden; /* to hide unnecessary scrollbar */
   overflow-y: scroll; /* to have scrollbar for only this element instead of page*/
-  height: 100%; /*this won't work unless height is set*/
+  height: 95%; /*this won't work unless height is set*/ /* height 100% will hide some content of last item in some cases*/
 }
