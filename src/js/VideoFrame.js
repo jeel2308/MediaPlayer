@@ -31,6 +31,20 @@ class VideoFrame extends React.PureComponent {
   video = React.createRef();
   subtitle = React.createRef();
   componentDidMount() {
+    this.video.current.addEventListener("stalled", e => {
+      console.log(e, "stalled");
+    });
+    this.video.current.addEventListener("error", e => {
+      console.log(this.props.urlState.url);
+      // let u = this.props.urlState.url;
+      // let index = u.lastIndexOf("/");
+      // u = u.substr(index + 1);
+      console.log(
+        this.props.fileList.fileEntries[this.props.fileList.currentIndex],
+        this.props.fileList.currentIndex
+      );
+      console.log(e, "error");
+    });
     window.addEventListener("resize", this.handleResize);
     window.addEventListener("readyToPlay", event => {
       const list = event.detail.fileList;

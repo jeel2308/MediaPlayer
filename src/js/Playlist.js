@@ -70,9 +70,10 @@ class Playlist extends React.PureComponent {
     window.handleRefresh(this.props.fileList.directory);
   };
   handleClick = e => {
-    const s = e.target.innerText || e.target.parentNode.innerText; // innerHTML will treat & as &amp;
+    const s = e.target.textContent || e.target.parentNode.textContent; // innerHTML will treat & as &amp; and innerText will remove extra spaces from url
     let index = s.lastIndexOf(">");
     let url = s.substr(index + 1);
+    url = url.replace(/\s/g, "%20");
     index = this.props.fileList.fileEntries.indexOf(url);
     url = this.props.fileList.directory + "/" + url;
     const subtitleUrl = this.props.fileList.subtitleList[index];
@@ -92,7 +93,7 @@ class Playlist extends React.PureComponent {
                 <PlaylistItem
                   key={this.props.fileList.fileEntries.indexOf(item)}
                   directory={this.props.fileList.directory}
-                  src={item}
+                  src={item.replace(/%20/g, " ")}
                   active={
                     this.props.fileList.currentIndex ===
                     this.props.fileList.fileEntries.indexOf(item)

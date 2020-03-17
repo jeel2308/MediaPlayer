@@ -17,7 +17,7 @@ window.openFile = async (directory, directoryList) => {
     throw new Error(e);
   }
   if (!obj.canceled) {
-    url = obj.filePaths[0];
+    url = obj.filePaths[0].replace(/\s/g, "%20");
     const index = url.lastIndexOf("\\");
     const folder = url.substr(0, index);
     const file = url.substr(index + 1, url.length);
@@ -39,8 +39,8 @@ window.openDirectory = async directory => {
     throw new Error(e);
   }
   if (!obj.canceled) {
-    if (directory !== obj.filePaths[0]) {
-      handleDirectorySubtitles(obj.filePaths[0]);
+    if (directory !== obj.filePaths[0].replace(/\s/g, "%20")) {
+      handleDirectorySubtitles(obj.filePaths[0].replace(/\s/g, "%20"));
     }
   }
 };
@@ -52,8 +52,8 @@ const handleDirectorySubtitles = (folder, file, type) => {
       resolve(files);
     });
   });
-  const videoFileList = list.then(fileList => {
-    const videoFileList = fileList.filter(file => {
+  list.then(fileList => {
+    let videoFileList = fileList.filter(file => {
       const extension = file.substring(file.lastIndexOf("."), file.length);
       switch (extension) {
         case ".mp4":
@@ -68,6 +68,9 @@ const handleDirectorySubtitles = (folder, file, type) => {
         default:
           return false;
       }
+    });
+    videoFileList = videoFileList.map(item => {
+      return item.replace(/\s/g, "%20");
     });
     if (!file && !type) {
       const event = new CustomEvent("readyToPlay", {
