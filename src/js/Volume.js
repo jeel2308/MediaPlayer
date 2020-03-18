@@ -56,11 +56,7 @@ class Volume extends React.PureComponent {
               {this.props.muted ? <MdVolumeOff /> : <MdVolumeUp />}
             </IconContext.Provider>
           </div>
-          <div
-            id="volumeBarContainer"
-            onClick={this.handleVideoVolume}
-            title={this.props.volume}
-          >
+          <div id="volumeBarContainer" onClick={this.handleVideoVolume}>
             <div id="volumeBar">
               <div
                 id="videoVolume"

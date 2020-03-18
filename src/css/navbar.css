@@ -1,29 +1,9 @@
-.navbar,
-.container-fluid {
-  padding: 0;
-}
-
-.ctrlBtns {
-  border: 0px solid white;
-  background-color: white;
-  padding: 0 2.5px;
-  margin: 5px;
-}
-.ctrlBtns:hover {
-  color: white;
-  background-color: black;
-  cursor: pointer;
-}
 .closeBtn {
   margin: auto;
   font-size: 25px;
 }
 .navbar_img:last-child:hover {
   background-color: red;
-}
-.ctrlBtns img {
-  width: 24px;
-  height: 24px;
 }
 
 #navbar {
@@ -34,6 +14,7 @@
   margin: 0;
   padding: 0;
   width: 100%;
+  height: 26.4px;
   position: sticky;
   top: 0px;
   z-index: 3; /* to overcome playlist  */
@@ -78,4 +59,23 @@
   border: 2px solid white;
   border-radius: 30%;
   background-color: inherit;
+}
+.dropdown {
+  position: relative;
+}
+.dropdownItems {
+  position: absolute;
+  top: 26.4px;
+  left: 0px;
+  background-color: darkslateblue;
+  display: inline-block;
+  width: 150px;
+  -webkit-app-region: no-drag;
+}
+.dropdownItems div {
+  padding: 4px 5px;
+}
+.dropdownItems div:hover {
+  cursor: pointer;
+  background-color: rgba(255, 255, 255, 0.3);
 }

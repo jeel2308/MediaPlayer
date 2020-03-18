@@ -8,6 +8,9 @@ import { currentIndex } from "../actions/updateList";
 // import "../css/font-awesome.min.css";
 
 class NavBar extends Component {
+  state = {
+    display: "none"
+  };
   handleFile = async () => {
     const { url, index } = await window.openFile(
       this.props.fileList.directory,
@@ -38,14 +41,35 @@ class NavBar extends Component {
   toggleDevTools = () => {
     if (window.toggleDevTools) window.toggleDevTools();
   };
+  toggleDropDown = e => {
+    const type = e.type;
+    if (type === "mouseenter")
+      this.setState(() => ({
+        display: "inline-block"
+      }));
+    else
+      this.setState(() => ({
+        display: "none"
+      }));
+  };
   render() {
     return (
       <ul id="navbar">
-        <li className="navbar_li nav-item" onClick={this.handleFile}>
-          Open File
-        </li>
-        <li className="navbar_li nav-item" onClick={this.handleFolder}>
-          Open Folder
+        <li className="dropdownContainer">
+          <div
+            className="dropdown"
+            onMouseEnter={this.toggleDropDown}
+            onMouseLeave={this.toggleDropDown}
+          >
+            <div className="dropdownTitle navbar_li">Open</div>
+            <div
+              className="dropdownItems"
+              style={{ display: this.state.display }}
+            >
+              <div onClick={this.handleFile}>Open File</div>
+              <div onClick={this.handleFolder}>Open Folder</div>
+            </div>
+          </div>
         </li>
         <li className="navbar_li nav-item" onClick={this.toggleDevTools}>
           DevTools
@@ -56,6 +80,7 @@ class NavBar extends Component {
         >
           PlayList
         </li>
+
         <li
           className="navbar_li navbar_img"
           id="navbar_right"
