@@ -26,7 +26,8 @@ class VideoFrame extends React.PureComponent {
     largeBtn: "",
     subtitlesBtn: "none",
     subtitlesBtnState: "none",
-    text: ""
+    text: "",
+    error: false
   };
   video = React.createRef();
   subtitle = React.createRef();
@@ -35,15 +36,10 @@ class VideoFrame extends React.PureComponent {
       console.log(e, "stalled");
     });
     this.video.current.addEventListener("error", e => {
-      console.log(this.props.urlState.url);
-      // let u = this.props.urlState.url;
-      // let index = u.lastIndexOf("/");
-      // u = u.substr(index + 1);
-      console.log(
-        this.props.fileList.fileEntries[this.props.fileList.currentIndex],
-        this.props.fileList.currentIndex
-      );
-      console.log(e, "error");
+      console.log("second");
+      this.setState(() => ({
+        error: true
+      }));
     });
     window.addEventListener("resize", this.handleResize);
     window.addEventListener("readyToPlay", event => {
@@ -352,6 +348,9 @@ class VideoFrame extends React.PureComponent {
   };
 
   setVideoState = e => {
+    this.setState(() => ({
+      error: false
+    }));
     const duration = e.target.duration;
     this.setState(() => ({
       state: "play",
@@ -447,6 +446,13 @@ class VideoFrame extends React.PureComponent {
             Video tag is not supported.
           </video>
           <div id="subtitleDisplay">{this.state.text}</div>
+          <div
+            id="error"
+            style={{ display: this.state.error ? "flex" : "none" }}
+          >
+            Video can't be played
+          </div>
+
           <Controls
             data={{
               duration: this.state.duration,

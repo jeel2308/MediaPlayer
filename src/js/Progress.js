@@ -6,10 +6,15 @@ class Progress extends React.PureComponent {
     left: "0px",
     visible: false,
     display: "none",
-    thumbnailCurrentTime: 0
+    thumbnailCurrentTime: 0,
+    error: false
   };
   ref = React.createRef();
-
+  handleError = e => {
+    this.setState(() => ({
+      error: true
+    }));
+  };
   setDuration = e => {
     const left = e.target.getBoundingClientRect().left;
     let width = 0;
@@ -27,6 +32,9 @@ class Progress extends React.PureComponent {
     const ratio = e.target.videoWidth / e.target.videoHeight;
     if (ratio < 1) e.target.style.width = `${180 * ratio}px`;
     else e.target.style.height = `${180 / ratio}px`;
+    this.setState(() => ({
+      error: false
+    }));
   };
 
   handleThumbnailDuration = e => {
@@ -53,14 +61,20 @@ class Progress extends React.PureComponent {
     this.ref.current.currentTime = duration;
   };
   handleThumbnail = flag => {
-    if (flag) {
-      this.setState(() => ({
-        display: "inline-block"
-      }));
-    } else {
+    if (this.state.error) {
       this.setState(() => ({
         display: "none"
       }));
+    } else {
+      if (flag) {
+        this.setState(() => ({
+          display: "inline-block"
+        }));
+      } else {
+        this.setState(() => ({
+          display: "none"
+        }));
+      }
     }
   };
   showTime = () => {
@@ -86,6 +100,7 @@ class Progress extends React.PureComponent {
           <video
             id="thumbnail"
             onLoadedMetadata={this.handleMetadata}
+            onError={this.handleError}
             controls={false}
             ref={this.ref}
             src={this.props.url}
