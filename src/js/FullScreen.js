@@ -1,12 +1,12 @@
 import React from "react";
 import { IconContext } from "react-icons";
-import { FaExpand } from "react-icons/fa";
+import { MdFullscreen, MdFullscreenExit } from "react-icons/md";
 import "../css/buttons.css";
 const FullScreen = props => {
   return (
     <div onClick={props.handleFullScreen} style={{ marginLeft: "auto" }}>
       <IconContext.Provider value={{ className: "fullscreen hover" }}>
-        <FaExpand />
+        {props.fullScreen === "true" ? <MdFullscreenExit /> : <MdFullscreen />}
       </IconContext.Provider>
     </div>
   );

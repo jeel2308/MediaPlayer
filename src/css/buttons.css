@@ -50,7 +50,7 @@ div[data-test-id="CircularProgressbarWithChildren"] {
   border-radius: 50%;
 }
 .fullscreen {
-  font-size: 20px;
+  font-size: 35px;
   color: white;
 }
 .hover:hover {

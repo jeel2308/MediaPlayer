@@ -289,6 +289,7 @@ class Controls extends React.PureComponent {
             </div>
             <FullScreen
               handleFullScreen={this.props.handlers.handleFullScreen}
+              fullScreen={this.props.data.fullScreen}
             />
           </div>
         </div>

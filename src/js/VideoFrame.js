@@ -464,7 +464,8 @@ class VideoFrame extends React.PureComponent {
               loop: this.state.loop,
               largeBtn: this.state.largeBtn,
               subtitlesBtn: this.state.subtitlesBtn,
-              subtitlesBtnState: this.state.subtitlesBtnState
+              subtitlesBtnState: this.state.subtitlesBtnState,
+              fullScreen: this.state.fullScreen
             }}
             handlers={{
               handleCurrentTime: this.handleCurrentTime,
