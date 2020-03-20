@@ -73,7 +73,7 @@ class Playlist extends React.PureComponent {
     const s = e.target.textContent || e.target.parentNode.textContent; // innerHTML will treat & as &amp; and innerText will remove extra spaces from url
     let index = s.lastIndexOf(">");
     let url = s.substr(index + 1);
-    url = url.replace(/\s/g, "%20");
+    // url = url.replace(/\s/g, "%20");
     index = this.props.fileList.fileEntries.indexOf(url);
     url = this.props.fileList.directory + "/" + url;
     const subtitleUrl = this.props.fileList.subtitleList[index];

@@ -82,7 +82,6 @@ class VideoFrame extends React.PureComponent {
     });
     window.addEventListener("refreshSubtitle", e => {
       const newSubtitleList = e.detail;
-
       let flag1 = true;
       let flag2 = true;
       const oldsubtitleList = this.props.fileList.subtitleList;
@@ -348,20 +347,42 @@ class VideoFrame extends React.PureComponent {
   };
 
   setVideoState = e => {
+    console.log(
+      this.props.fileList.subtitleList &&
+        this.props.fileList.subtitleList[this.props.fileList.currentIndex]
+    );
+    if (
+      this.props.fileList.subtitleList &&
+      this.props.fileList.subtitleList[this.props.fileList.currentIndex]
+    ) {
+      if (this.state.subtitlesBtnState === "block") {
+        this.video.current.textTracks[0].mode = "hidden";
+      }
+      if (this.state.subtitlesBtn === "none") {
+        this.setState(() => ({
+          subtitlesBtn: "flex"
+        }));
+      }
+    } else {
+      this.setState(() => ({
+        subtitlesBtn: "none"
+      }));
+    }
     this.setState(() => ({
       error: false
     }));
     const duration = e.target.duration;
     this.setState(() => ({
       state: "play",
-      duration,
-      subtitlesBtn: !this.props.fileList.subtitleList[
-        this.props.fileList.currentIndex
-      ]
-        ? "none"
-        : "flex",
-      subtitlesBtnState: "none"
+      duration
+      // subtitlesBtn: !this.props.fileList.subtitleList[
+      //   this.props.fileList.currentIndex
+      // ]
+      //   ? "none"
+      //   : "flex",
+      // subtitlesBtnState: "none"
     }));
+    console.log(this.state);
   };
   setSubtitleState = () => {
     if (this.video.current.textTracks[0].mode === "disabled") {

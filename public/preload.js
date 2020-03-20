@@ -17,7 +17,7 @@ window.openFile = async (directory, directoryList) => {
     throw new Error(e);
   }
   if (!obj.canceled) {
-    url = obj.filePaths[0].replace(/\s/g, "%20");
+    url = obj.filePaths[0];
     const index = url.lastIndexOf("\\");
     const folder = url.substr(0, index);
     const file = url.substr(index + 1, url.length);
@@ -39,8 +39,8 @@ window.openDirectory = async directory => {
     throw new Error(e);
   }
   if (!obj.canceled) {
-    if (directory !== obj.filePaths[0].replace(/\s/g, "%20")) {
-      handleDirectorySubtitles(obj.filePaths[0].replace(/\s/g, "%20"));
+    if (directory !== obj.filePaths[0]) {
+      handleDirectorySubtitles(obj.filePaths[0]);
     }
   }
 };
@@ -48,103 +48,109 @@ window.openDirectory = async directory => {
 const handleDirectorySubtitles = (folder, file, type) => {
   const list = new Promise((resolve, reject) => {
     fs.readdir(folder, (err, files) => {
-      if (err) reject([]);
+      if (err) reject(err);
       resolve(files);
     });
   });
-  list.then(fileList => {
-    let videoFileList = fileList.filter(file => {
-      const extension = file.substring(file.lastIndexOf("."), file.length);
-      switch (extension) {
-        case ".mp4":
-        case ".MP4":
-        case ".mkv":
-        case ".MKV":
-        case ".avi":
-        case ".AVI":
-        case ".OGG":
-        case ".ogg":
-          return true;
-        default:
-          return false;
-      }
-    });
-    videoFileList = videoFileList.map(item => {
-      return item.replace(/\s/g, "%20");
-    });
-    if (!file && !type) {
-      const event = new CustomEvent("readyToPlay", {
-        detail: {
-          fileList: videoFileList,
-          index: 0,
-          directory: folder,
-          started: false
+  list
+    .then(fileList => {
+      console.log(fileList);
+      let videoFileList = fileList.filter(file => {
+        const extension = file.substring(file.lastIndexOf("."), file.length);
+        switch (extension) {
+          case ".mp4":
+          case ".MP4":
+          case ".mkv":
+          case ".MKV":
+          case ".avi":
+          case ".AVI":
+          case ".OGG":
+          case ".ogg":
+            return true;
+          default:
+            return false;
         }
       });
-      window.dispatchEvent(event);
-    } else if (file && !type) {
-      const event = new CustomEvent("readyToPlay", {
-        detail: {
-          fileList: videoFileList,
-          index: videoFileList.indexOf(file),
-          directory: folder,
-          started: true
-        }
-      });
-      window.dispatchEvent(event);
-    } else {
-      const event = new CustomEvent("refreshUrl", { detail: videoFileList });
-      window.dispatchEvent(event);
-    }
-    const subtitleList = videoFileList.map(file => {
-      const index = file.lastIndexOf(".");
-      const file1 = file.substr(0, index) + ".vtt";
-      const fileIndex = fileList.indexOf(file1);
-      if (fileIndex !== -1) {
-        return new Promise((resolve, reject) => {
-          resolve(folder + "/" + file1);
-        });
-      } else {
-        const file1 = file.substr(0, index) + ".srt";
-        const fileIndex = fileList.indexOf(file1);
 
-        if (fileIndex === -1) {
+      // videoFileList = videoFileList.map(item => {
+      //   return item.replace(/\s/g, "%20");
+      // });
+      if (!file && !type) {
+        const event = new CustomEvent("readyToPlay", {
+          detail: {
+            fileList: videoFileList,
+            index: 0,
+            directory: folder,
+            started: false
+          }
+        });
+        window.dispatchEvent(event);
+      } else if (file && !type) {
+        const event = new CustomEvent("readyToPlay", {
+          detail: {
+            fileList: videoFileList,
+            index: videoFileList.indexOf(file),
+            directory: folder,
+            started: true
+          }
+        });
+        window.dispatchEvent(event);
+      } else {
+        const event = new CustomEvent("refreshUrl", { detail: videoFileList });
+        window.dispatchEvent(event);
+      }
+      const subtitleList = videoFileList.map(file => {
+        const index = file.lastIndexOf(".");
+        const file1 = file.substr(0, index) + ".vtt";
+        const fileIndex = fileList.indexOf(file1);
+        if (fileIndex !== -1) {
           return new Promise((resolve, reject) => {
-            resolve("");
+            resolve(folder + "/" + file1);
           });
         } else {
-          return new Promise((resolve, reject) => {
-            const p = srtToVtt(file1, folder);
-            p.then(resolve);
-          });
+          const file1 = file.substr(0, index) + ".srt";
+          const fileIndex = fileList.indexOf(file1);
+
+          if (fileIndex === -1) {
+            return new Promise((resolve, reject) => {
+              resolve("");
+            });
+          } else {
+            return new Promise((resolve, reject) => {
+              const p = srtToVtt(file1, folder);
+              p.then(resolve);
+            });
+          }
         }
-      }
+      });
+      Promise.all(subtitleList).then(subtitleList => {
+        if (!type) {
+          const event = new CustomEvent("subtitlesReady", {
+            detail: subtitleList
+          });
+          window.dispatchEvent(event);
+        } else {
+          const event = new CustomEvent("refreshSubtitle", {
+            detail: subtitleList
+          });
+          window.dispatchEvent(event);
+        }
+      });
+      //   const thumbnails = videoFileList.map(file => {
+      //     const index = file.lastIndexOf(".");
+      //     const file2 = folder + "/" + file.substr(0, index) + ".png";
+      //     const file1 = folder + "/" + file;
+      //     return genThumbnail(file1, file2, "150x100");
+      //   });
+      //   Promise.all(thumbnails)
+      //     .then(() => {
+      //       console.log("done");
+      //     })
+      //     .catch(console.log);
+    })
+    .catch(e => {
+      console.log(e);
     });
-    Promise.all(subtitleList).then(subtitleList => {
-      if (!type) {
-        const event = new CustomEvent("subtitlesReady", {
-          detail: subtitleList
-        });
-        window.dispatchEvent(event);
-      } else {
-        const event = new CustomEvent("refreshSubtitle", {
-          detail: subtitleList
-        });
-        window.dispatchEvent(event);
-      }
-    });
-    //   const thumbnails = videoFileList.map(file => {
-    //     const index = file.lastIndexOf(".");
-    //     const file2 = folder + "/" + file.substr(0, index) + ".png";
-    //     const file1 = folder + "/" + file;
-    //     return genThumbnail(file1, file2, "150x100");
-    //   });
-    //   Promise.all(thumbnails)
-    //     .then(() => {
-    //       console.log("done");
-    //     })
-    //     .catch(console.log);
-  });
 };
 // const handleDirectorySubtitles = (folder, file) => {
 //   const list = new Promise((resolve, reject) => {
