@@ -84,9 +84,15 @@ class Playlist extends React.PureComponent {
   render() {
     return (
       <>
-        <button id="refresh" onClick={this.handleRefresh}>
-          Refresh
-        </button>
+        {this.props.fileList.fileEntries.length ? (
+          <button id="refresh" onClick={this.handleRefresh}>
+            Refresh
+          </button>
+        ) : (
+          <button id="refresh" style={{ border: "none" }}>
+            No items
+          </button>
+        )}
         <div id="playlist" onClick={this.handleClick}>
           {this.props.fileList.fileEntries
             ? this.props.fileList.fileEntries.map(item => (

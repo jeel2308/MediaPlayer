@@ -426,7 +426,8 @@ class VideoFrame extends React.PureComponent {
               this.state.fullScreen === "true" ? "100%" : this.state.height,
             width:
               this.state.fullScreen === "true"
-                ? "100%"
+                ? `
+                  ${this.props.playListRight === "0%" ? 75 : 100}%`
                 : `${parseInt(this.state.width) *
                     (this.props.playListRight === "0%" ? 0.75 : 1)}%`,
             zIndex: this.state.fullScreen === "true" ? 2 : 0
@@ -447,7 +448,9 @@ class VideoFrame extends React.PureComponent {
               height:
                 this.state.fullScreen === "true" ? "100vh" : this.state.height,
               width:
-                this.state.fullScreen === "true" ? "100vw" : this.state.width
+                this.state.fullScreen === "true"
+                  ? `${this.props.playListRight === "0%" ? 75 : 100}%`
+                  : this.state.width
             }}
             // src={this.props.url + "#t=15"} /*to start video from 15sec*/
             src={this.props.urlState.url}
